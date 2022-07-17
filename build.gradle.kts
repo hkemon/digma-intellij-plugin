@@ -1,7 +1,7 @@
 import common.properties
 import org.jetbrains.changelog.markdownToHTML
 
-fun properties(key: String) = properties(key,project)
+fun properties(key: String) = properties(key, project)
 
 @Suppress(
     //see: https://youtrack.jetbrains.com/issue/KTIJ-19369
@@ -17,10 +17,11 @@ plugins {
 
 
 
-dependencies{
+dependencies {
     implementation(project(":model"))
     implementation(project(":analytics-provider"))
     implementation(project(":ide-common"))
+    implementation(project(":goland"))
     implementation(project(":idea"))
     implementation(project(":pycharm"))
     implementation(project(":rider"))
@@ -54,7 +55,7 @@ qodana {
 }
 
 
-project.afterEvaluate{
+project.afterEvaluate {
     //the final plugin distribution is packaged from the sandbox.
     //So,make all the sub projects buildPlugin task run before this project's buildPlugin.
     //that will make sure that their prepareSandbox task runs before building the plugin coz
@@ -65,9 +66,10 @@ project.afterEvaluate{
     //but this syntax is not favorite by the gradle developers becasue it will cause eager initialization of the task.
     val buildPlugin = tasks.named("buildPlugin").get()
     val classes = tasks.named("classes").get()
-    project(":idea").afterEvaluate{ buildPlugin.dependsOn(tasks.getByName("buildPlugin"))   }
-    project(":pycharm").afterEvaluate{ buildPlugin.dependsOn(tasks.getByName("buildPlugin"))   }
-    project(":rider").afterEvaluate{
+    project(":goland").afterEvaluate { buildPlugin.dependsOn(tasks.getByName("buildPlugin")) }
+    project(":idea").afterEvaluate { buildPlugin.dependsOn(tasks.getByName("buildPlugin")) }
+    project(":pycharm").afterEvaluate { buildPlugin.dependsOn(tasks.getByName("buildPlugin")) }
+    project(":rider").afterEvaluate {
         buildPlugin.dependsOn(tasks.getByName("buildPlugin"))
     }
 }
@@ -77,7 +79,7 @@ project.afterEvaluate{
 tasks {
 
 
-    jar{
+    jar {
         dependsOn(":rider:copyKotlinModuleFile")
     }
 
@@ -167,7 +169,7 @@ tasks {
 
     listProductsReleases {
 //        types.set(listOf("RD","IC","PC"))
-        types.set(listOf("RD","IC","PC","IU"))
+        types.set(listOf("RD", "GO", "IC", "PC", "IU"))
         sinceVersion.set("2022.1")
         untilVersion.set("2022.1.2")
 //        sinceBuild.set("221.5787.35")
