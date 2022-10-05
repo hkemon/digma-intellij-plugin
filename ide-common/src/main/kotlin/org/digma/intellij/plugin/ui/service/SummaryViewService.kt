@@ -35,7 +35,7 @@ class SummaryViewService(project: Project) : AbstractViewService(project) {
         }
 
         //this is for when environment changes or connection lost and regained
-        project.messageBus.connect(project)
+        project.messageBus.connect(this)
             .subscribe(EnvironmentChanged.ENVIRONMENT_CHANGED_TOPIC, object : EnvironmentChanged {
 
                 override fun environmentChanged(newEnv: String?) {

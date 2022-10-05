@@ -15,7 +15,7 @@ import org.digma.intellij.plugin.model.discovery.DocumentInfo
 import org.digma.intellij.plugin.model.discovery.MethodInfo
 import org.digma.intellij.plugin.model.discovery.SpanInfo
 import org.digma.intellij.plugin.model.lens.CodeLens
-import org.digma.intellij.plugin.psi.PsiUtils
+import org.digma.intellij.plugin.rider.psi.RiderPsiUtils
 import org.jetbrains.annotations.NotNull
 import java.util.function.Consumer
 
@@ -34,7 +34,7 @@ class CodeObjectHost(project: Project): LifetimedProjectComponent(project) {
 
     fun getDocument(psiFile: PsiFile): DocumentInfo? {
         return ReadAction.compute<DocumentInfo,Exception> {
-            val path: String = PsiUtils.psiFileToDocumentProtocolKey(psiFile)
+            val path: String = RiderPsiUtils.psiFileToDocumentProtocolKey(psiFile)
             Log.log(logger::debug, "Got request for getDocument for PsiFile {}, converted to path: {}",psiFile.virtualFile,path)
             val document: Document? = this.model.documents[path]
             Log.log(logger::debug, "Got document for {}: {}",path,document?.printToString())
@@ -52,7 +52,7 @@ class CodeObjectHost(project: Project): LifetimedProjectComponent(project) {
 
         model.protocol.scheduler.invokeOrQueue {
             WriteAction.run<Exception> {
-                val documentKey = PsiUtils.psiFileToDocumentProtocolKey(psiFile)
+                val documentKey = RiderPsiUtils.psiFileToDocumentProtocolKey(psiFile)
 
                 codeLenses.forEach(Consumer { codeLens ->
                     model.codeLens.computeIfAbsent(codeLens.codeObjectId){LensPerObjectId()}

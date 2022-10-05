@@ -47,7 +47,7 @@ public class Environment implements EnvironmentsSupplier {
         //call refresh on environment when connection is lost, in some cases its necessary for some components to reset or update ui.
         //usually these components react to environment change events, so this will trigger an environment change if not already happened before.
         //if the connection lost happened during environment refresh then it may cause a second redundant event but will do no harm.
-        project.getMessageBus().connect(project).subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
+        project.getMessageBus().connect(analyticsService).subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
             @Override
             public void connectionLost() {
                 refresh();
@@ -81,7 +81,6 @@ public class Environment implements EnvironmentsSupplier {
         this.current = newEnv;
         persistenceData.setCurrentEnv(newEnv);
 
-        //todo: maybe always on background
         if (SwingUtilities.isEventDispatchThread()) {
             new Task.Backgroundable(project, "Digma: environment changed...") {
                 @Override
@@ -163,7 +162,7 @@ public class Environment implements EnvironmentsSupplier {
 
             Log.log(LOGGER::debug, "Refreshing Environments list");
             var newEnvironments = analyticsService.getEnvironments();
-            if (newEnvironments != null && newEnvironments.size() > 0) {
+            if (newEnvironments != null && !newEnvironments.isEmpty()) {
                 Log.log(LOGGER::debug, "Got environments {}", newEnvironments);
             } else {
                 Log.log(LOGGER::warn, "Error loading environments: {}", newEnvironments);
