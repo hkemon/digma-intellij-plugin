@@ -15,13 +15,14 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.BinaryLightVirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
-import org.digma.intellij.plugin.idea.psi.java.JavaLanguageService;
 import org.digma.intellij.plugin.log.Log;
 import org.digma.intellij.plugin.notifications.NotificationUtil;
+import org.digma.intellij.plugin.psi.LanguageService;
 import org.digma.intellij.plugin.vcs.VcsService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class EditorService implements Disposable {
@@ -43,11 +44,22 @@ public class EditorService implements Disposable {
 
 
     public void openTestFile(){
-        JavaLanguageService javaLanguageService = project.getService(JavaLanguageService.class);
-        PsiFile ownerControllerFile = javaLanguageService.findFileForClass("org.springframework.samples.petclinic.owner.OwnerController");
-        if (ownerControllerFile != null) {
-            var workspaceFile = ownerControllerFile.getVirtualFile();
-            openVirtualFile(workspaceFile, 10);
+
+        //this is demo code that will not work in rider, it's written in reflection so that will run on rider too,
+        //it will not do anything on rider but at least will not crash.
+        try {
+            Class<LanguageService> javaLanguageServiceClass = (Class<LanguageService>) Class.forName("org.digma.intellij.plugin.idea.psi.java.JavaLanguageService");
+            LanguageService javaLanguageService = project.getService(javaLanguageServiceClass);
+            if (javaLanguageService != null) {
+                Method findFileForClass = javaLanguageServiceClass.getMethod("findFileForClass", String.class);
+                PsiFile ownerControllerFile = (PsiFile) findFileForClass.invoke(javaLanguageService, "org.springframework.samples.petclinic.owner.OwnerController");
+                if (ownerControllerFile != null) {
+                    var workspaceFile = ownerControllerFile.getVirtualFile();
+                    openVirtualFile(workspaceFile, 10);
+                }
+            }
+        } catch (Exception e) {
+           e.printStackTrace();
         }
     }
 
