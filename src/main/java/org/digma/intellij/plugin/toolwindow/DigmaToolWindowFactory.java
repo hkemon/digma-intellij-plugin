@@ -1,18 +1,28 @@
 package org.digma.intellij.plugin.toolwindow;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.ui.components.ActionLink;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.jcef.*;
+import org.apache.commons.io.IOUtils;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.browser.CefMessageRouter;
+import org.cef.callback.CefQueryCallback;
+import org.cef.handler.CefMessageRouterHandlerAdapter;
 import org.digma.intellij.plugin.analytics.AnalyticsService;
 import org.digma.intellij.plugin.analytics.BackendConnectionMonitor;
 import org.digma.intellij.plugin.analytics.EnvironmentChanged;
 import org.digma.intellij.plugin.common.Backgroundable;
 import org.digma.intellij.plugin.log.Log;
+import org.digma.intellij.plugin.service.EditorService;
 import org.digma.intellij.plugin.service.ErrorsActionsService;
 import org.digma.intellij.plugin.ui.ToolWindowShower;
 import org.digma.intellij.plugin.ui.errors.ErrorsTabKt;
@@ -23,6 +33,12 @@ import org.digma.intellij.plugin.ui.service.SummaryViewService;
 import org.digma.intellij.plugin.ui.service.ToolWindowTabsHelper;
 import org.digma.intellij.plugin.ui.summary.SummaryTabKt;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.Date;
 
 
 /**
@@ -57,6 +73,7 @@ public class DigmaToolWindowFactory implements ToolWindowFactory {
         createErrorsTab(project, toolWindow, contentFactory, toolWindowTabsHelper);
         createSummaryTab(project, toolWindow, contentFactory);
 
+        createJcefDemoTab(project, toolWindow, contentFactory);
 
         ErrorsActionsService errorsActionsService = project.getService(ErrorsActionsService.class);
         toolWindow.getContentManager().addContentManagerListener(errorsActionsService);
@@ -95,6 +112,96 @@ public class DigmaToolWindowFactory implements ToolWindowFactory {
             });
         }
 
+    }
+
+    private void createJcefDemoTab(Project project, ToolWindow toolWindow, ContentFactory contentFactory) {
+
+        if (!JBCefApp.isSupported()) {
+            // Fallback to an alternative browser-less solution
+            return;
+        }
+
+
+//        JBCefBrowserBuilder jbCefBrowserBuilder = new JBCefBrowserBuilder();
+//        jbCefBrowserBuilder.setOffScreenRendering(false);
+//        JBCefBrowser jbCefBrowser = jbCefBrowserBuilder.build();
+        JBCefBrowser jbCefBrowser = new JBCefBrowser();
+
+
+//        jbCefBrowser.loadURL("https://en.wikipedia.org/wiki/Main_Page");
+//        jbCefBrowser.loadHTML(Files.readString(Path.of(getClass().getResource("test.html").toURI())));
+        try {
+            jbCefBrowser.loadHTML(IOUtils.resourceToString("/test.html", null));
+//            jbCefBrowser.loadHTML(IOUtils.resourceToString("/binding_test.html",null));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        JBCefClient jbCefClient = jbCefBrowser.getJBCefClient();
+
+        CefMessageRouter msgRouter = CefMessageRouter.create();
+        msgRouter.addHandler(new CefMessageRouterHandlerAdapter() {
+            @Override
+            public boolean onQuery(CefBrowser browser, CefFrame frame, long queryId, String request, boolean persistent, CefQueryCallback callback) {
+
+                if (request.startsWith("BindingTest")) {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        project.getService(EditorService.class).openTestFile();
+                    });
+                    callback.success("OK from java, opening class OwnerController at " + new Date());
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onQueryCanceled(CefBrowser browser, CefFrame frame, long queryId) {
+                super.onQueryCanceled(browser, frame, queryId);
+            }
+        }, true);
+
+        jbCefClient.getCefClient().addMessageRouter(msgRouter);
+
+
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+        JButton showAlert = new ActionLink("Show Alert");
+        showAlert.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jbCefBrowser.getCefBrowser().executeJavaScript("alert('ExecuteJavaScript works!');",jbCefBrowser.getCefBrowser().getURL(),0);
+            }
+        });
+        topPanel.add(showAlert, BorderLayout.WEST);
+
+        JButton resetLabel = new ActionLink("Reset Label");
+        resetLabel.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String script = "document.getElementById('label1').innerHTML = 'Empty';";
+                jbCefBrowser.getCefBrowser().executeJavaScript(script,jbCefBrowser.getCefBrowser().getURL(),0);
+            }
+        });
+        topPanel.add(resetLabel, BorderLayout.EAST);
+
+
+        JPanel browserPanel = new JPanel();
+        browserPanel.setLayout(new BorderLayout());
+        browserPanel.add(jbCefBrowser.getComponent(), BorderLayout.CENTER);
+
+
+        JPanel jcefDemoPanel = new JPanel();
+        jcefDemoPanel.setLayout(new BorderLayout());
+        jcefDemoPanel.add(topPanel, BorderLayout.NORTH);
+        jcefDemoPanel.add(browserPanel, BorderLayout.CENTER);
+
+        var jcefContent = contentFactory.createContent(jcefDemoPanel, "Jcef", false);
+        jcefContent.setTabName("Jcef");
+
+        toolWindow.getContentManager().addContent(jcefContent);
     }
 
 

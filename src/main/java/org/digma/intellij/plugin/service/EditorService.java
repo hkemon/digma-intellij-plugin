@@ -12,8 +12,10 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.vfs.ContentRevisionVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.BinaryLightVirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
+import org.digma.intellij.plugin.idea.psi.java.JavaLanguageService;
 import org.digma.intellij.plugin.log.Log;
 import org.digma.intellij.plugin.notifications.NotificationUtil;
 import org.digma.intellij.plugin.vcs.VcsService;
@@ -37,6 +39,16 @@ public class EditorService implements Disposable {
     public EditorService(Project project) {
         this.project = project;
         vcsService = project.getService(VcsService.class);
+    }
+
+
+    public void openTestFile(){
+        JavaLanguageService javaLanguageService = project.getService(JavaLanguageService.class);
+        PsiFile ownerControllerFile = javaLanguageService.findFileForClass("org.springframework.samples.petclinic.owner.OwnerController");
+        if (ownerControllerFile != null) {
+            var workspaceFile = ownerControllerFile.getVirtualFile();
+            openVirtualFile(workspaceFile, 10);
+        }
     }
 
 

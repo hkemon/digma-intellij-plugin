@@ -22,6 +22,7 @@ plugins {
 
 dependencies{
     implementation(libs.commons.lang3)
+    implementation(libs.commons.io)
     implementation(project(":model"))
     implementation(project(":analytics-provider"))
     implementation(project(":ide-common"))

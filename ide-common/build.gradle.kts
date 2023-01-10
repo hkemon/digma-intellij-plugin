@@ -17,6 +17,7 @@ dependencies {
     api(libs.threeten)
     api(libs.commons.lang3)
     api(libs.commons.collections4)
+    api(libs.commons.io)
 
     implementation(project(":model"))
     implementation(project(":analytics-provider"))

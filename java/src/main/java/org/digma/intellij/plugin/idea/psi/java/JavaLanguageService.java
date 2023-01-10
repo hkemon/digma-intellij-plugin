@@ -467,4 +467,9 @@ public class JavaLanguageService implements LanguageService {
     }
 
 
+    @Nullable
+    public PsiFile findFileForClass(String className) {
+        PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.projectScope(project));
+        return psiClass != null ? psiClass.getContainingFile() : null ;
+    }
 }
