@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.rd.util.launchBackground
+import com.intellij.openapi.rd.util.launchIOBackground
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.rd.util.lifetime.LifetimeDefinition
 import kotlinx.coroutines.delay
@@ -46,7 +46,7 @@ class GeneralFileEditorListener(val project: Project) : FileEditorManagerListene
         // create a lifetime for actual focused file
         // Lifetime by itself is a lightweight and heavily optimized object. It is okay to create new lifetime on each selection change without any performance impact whatsoever.
         val newLifetimeDefinition = LifetimeDefinition()
-        newLifetimeDefinition.lifetime.launchBackground {
+        newLifetimeDefinition.lifetime.launchIOBackground {
             // next logic is the Coroutine's body
             while (true) {
                 delay(10000)// 10 seconds
