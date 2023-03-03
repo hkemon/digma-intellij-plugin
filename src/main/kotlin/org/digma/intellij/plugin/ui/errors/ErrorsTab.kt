@@ -146,8 +146,8 @@ fun errorsPanel(project: Project): DigmaTabPanel {
                 errorsPanelListCardLayout.show(errorsPanelListCardPanel, LIST_CARD_NAME)
             }
 
-            revalidate()
-            repaint()
+//            revalidate()
+//            repaint()
         }
     }
 

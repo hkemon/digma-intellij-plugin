@@ -1,19 +1,15 @@
 package org.digma.intellij.plugin.ui.list.insights
 
 import com.google.common.io.CharStreams
-import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.JBUI.Borders.empty
 import org.digma.intellij.plugin.model.rest.insights.SpanDurationsPercentile
-import org.digma.intellij.plugin.settings.LinkMode
-import org.digma.intellij.plugin.settings.SettingsState
 import org.digma.intellij.plugin.ui.common.*
-import org.digma.intellij.plugin.ui.list.ListItemActionButton
 import org.digma.intellij.plugin.ui.list.PanelsLayoutHelper
 import org.digma.intellij.plugin.ui.model.TraceSample
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.service.needToShowDurationChange
 import org.ocpsoft.prettytime.PrettyTime
 import org.threeten.extra.AmountFormats
@@ -24,7 +20,6 @@ import java.sql.Timestamp
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.swing.BoxLayout
-import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 import kotlin.math.abs
@@ -56,8 +51,8 @@ fun percentileRowPanel(percentile: SpanDurationsPercentile, panelsLayoutHelper: 
     val percentileName = "P${(percentile.percentile * 100).toInt()}"
     traceSamples.add(buildTraceSample(percentile))
     val pLabelNumbersText = "${percentile.currentDuration.value} ${percentile.currentDuration.unit}"
-    val pLabelText = "$percentileName $HTML_NON_BREAKING_SPACE ${spanBold(pLabelNumbersText)}"
-    val pLabel = CopyableLabelHtml(pLabelText)
+    val pLabelText = asHtml("$percentileName $HTML_NON_BREAKING_SPACE ${spanBold(pLabelNumbersText)}")
+    val pLabel = MultiLineHtmlLabel(pLabelText)
     pLabel.toolTipText = pLabelText
     val pLabelPanel = object : JPanel() {
         override fun getPreferredSize(): Dimension {
@@ -83,7 +78,7 @@ fun percentileRowPanel(percentile: SpanDurationsPercentile, panelsLayoutHelper: 
         val durationText = computeDurationText(percentile)
         val whenText = computeWhenText(percentile)
         val durationLabelText = asHtml(spanGrayed("$durationText,$whenText"))
-        val durationLabel = JBLabel(durationLabelText, icon, SwingConstants.LEFT)
+        val durationLabel = MultiLineHtmlLabel(durationLabelText, icon, SwingConstants.LEFT)
         durationLabel.toolTipText = durationLabelText
         durationsPanel.add(durationLabel, BorderLayout.CENTER)
     }
@@ -134,7 +129,7 @@ fun getDefaultSpanOneRecordPanel(): JPanel {
 
 fun buildJPanelWithButtonToJaeger(builder: StringBuilder, line: JPanel, traceSample: TraceSample?,
                                   project: Project, spanName: String): JPanel {
-    val spanFlowLabel = CopyableLabelHtml(asHtml(builder.toString()))
+    val spanFlowLabel = MultiLineHtmlLabel(asHtml(builder.toString()))
     spanFlowLabel.alignmentX = 0.0f
     line.add(spanFlowLabel, BorderLayout.CENTER)
 

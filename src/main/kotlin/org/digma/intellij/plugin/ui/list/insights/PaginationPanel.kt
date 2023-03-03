@@ -2,11 +2,14 @@ package org.digma.intellij.plugin.ui.list.insights
 
 import com.intellij.ui.components.ActionLink
 import com.intellij.util.ui.JBUI
-import org.digma.intellij.plugin.editor.*
+import org.digma.intellij.plugin.editor.addInsightPaginationInfo
+import org.digma.intellij.plugin.editor.getCurrentPageNumberForInsight
+import org.digma.intellij.plugin.editor.getFocusedDocumentName
+import org.digma.intellij.plugin.editor.updateListOfEntriesToDisplay
 import org.digma.intellij.plugin.ui.common.asHtml
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
 import java.awt.BorderLayout
-import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
@@ -94,7 +97,7 @@ fun <T> buildPaginationPanel(
     }
 
     val paginationLabelText = "$currPageNum of $lastPageNum"
-    val paginationLabel = JLabel(asHtml(paginationLabelText), SwingConstants.LEFT)
+    val paginationLabel = MultiLineHtmlLabel(asHtml(paginationLabelText), SwingConstants.LEFT)
     paginationLabel.border = JBUI.Borders.emptyLeft(5)
 
     prev.border = JBUI.Borders.emptyRight(3)

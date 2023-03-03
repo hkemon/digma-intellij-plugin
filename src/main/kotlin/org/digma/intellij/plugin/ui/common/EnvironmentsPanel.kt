@@ -191,7 +191,7 @@ class EnvironmentsPanel(
         SwingUtilities.invokeLater{
             removeExistingEnvironmentsPanelIfPresent()
             buildEnvironmentsPanelButtons(buttonsInfo, hasUsageFunction)
-            revalidate()
+//            revalidate()
         }
     }
 

@@ -6,6 +6,7 @@ import org.digma.intellij.plugin.analytics.AnalyticsService
 import org.digma.intellij.plugin.analytics.BackendConnectionMonitor
 import org.digma.intellij.plugin.settings.SettingsState
 import org.digma.intellij.plugin.ui.list.commonListItemPanel
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
 import java.awt.BorderLayout
 import java.awt.CardLayout
@@ -39,7 +40,7 @@ class NoConnectionWrapper(private val project: Project, private val panel: Digma
 
     private fun createNoConnectionPanel(): Component {
 
-        val messageLabel = JLabel(createNoConnectionMessage())
+        val messageLabel = MultiLineHtmlLabel(createNoConnectionMessage())
 
         //replace the label text for any settings change, although we need only on url change.
         settingsState.addChangeListener {

@@ -16,6 +16,7 @@ import org.digma.intellij.plugin.ui.model.errors.FrameListViewItem
 import org.digma.intellij.plugin.ui.model.errors.FrameStackTitle
 import org.digma.intellij.plugin.ui.model.errors.SpanTitle
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import java.awt.GridBagLayout
 import java.awt.GridLayout
@@ -145,7 +146,7 @@ class ErrorFramesPanelListCellRenderer : AbstractPanelListCellRenderer() {
         val panel = JPanel()
         panel.layout = GridLayout(1,1)
         val text = buildTitleItalicGrayedComment(modelObject.frameStack.exceptionType,modelObject.frameStack.exceptionMessage)
-        val label = CopyableLabelHtml(text)
+        val label = MultiLineHtmlLabel(text)
         label.toolTipText = text
         panel.add(label)
         panel.border = Borders.empty(3,3,5,3)

@@ -18,6 +18,7 @@ import org.digma.intellij.plugin.ui.list.ScrollablePanelList
 import org.digma.intellij.plugin.ui.list.errordetails.ErrorFramesPanelList
 import org.digma.intellij.plugin.ui.list.listBackground
 import org.digma.intellij.plugin.ui.model.errors.ErrorsModel
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
 import java.awt.*
 import java.util.*
@@ -115,9 +116,9 @@ fun errorDetailsPanel(project: Project, errorsModel: ErrorsModel): DigmaTabPanel
 
             buildServicesPanel(servicesPanel, errorsModel)
             affectedServicesLabel.toolTipText = getAffectedServicesTooltip(errorsModel)
-            servicesPanel.revalidate()
-            servicesPanel.repaint()
-            servicesPanelWrapper.revalidate()
+//            servicesPanel.revalidate()
+//            servicesPanel.repaint()
+//            servicesPanelWrapper.revalidate()
 
             framesList.getModel().setListData(errorsModel.errorDetails.flowStacks.getCurrentStack())
 
@@ -132,7 +133,7 @@ fun errorDetailsPanel(project: Project, errorsModel: ErrorsModel): DigmaTabPanel
             constraints.weighty = weightyForServicesPanel(errorsModel)
             add(servicesPanelWrapper, constraints, index)
 
-            revalidate()
+//            revalidate()
 
         }
     }
@@ -422,13 +423,13 @@ private fun namePanel(errorsModel: ErrorsModel): DialogPanel {
     return panel {
         indent {
             row {
-                cell(CopyableLabelHtml(""))
+                cell(MultiLineHtmlLabel(""))
                     .horizontalAlign(HorizontalAlign.FILL).bind(
-                        CopyableLabelHtml::getText, CopyableLabelHtml::setText, MutableProperty(
+                        MultiLineHtmlLabel::getText, MultiLineHtmlLabel::setText, MutableProperty(
                             getter = { buildErrorNameHtml(errorsModel) },
                             setter = {})
                     ).bind(
-                        CopyableLabelHtml::getToolTipText, CopyableLabelHtml::setToolTipText, MutableProperty(
+                        MultiLineHtmlLabel::getToolTipText, MultiLineHtmlLabel::setToolTipText, MutableProperty(
                             getter = { buildErrorNameHtml(errorsModel) },
                             setter = {}))
 

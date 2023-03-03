@@ -8,6 +8,7 @@ import org.digma.intellij.plugin.ui.common.Laf
 import org.digma.intellij.plugin.ui.common.asHtml
 import org.digma.intellij.plugin.ui.common.spanBold
 import org.digma.intellij.plugin.ui.model.TraceSample
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -57,8 +58,8 @@ private fun getRowPanel(insight: SpanNPlusOneInsight): JPanel {
     val rowPanel = createDefaultBoxLayoutLineAxisPanel()
 
     val repeatsValue = "${insight.occurrences} (median)"
-    val repeatsLabel = JLabel(asHtml("Repeats: ${spanBold(repeatsValue)}"))
-    val durationLabel = JLabel(asHtml("Duration: " +
+    val repeatsLabel = MultiLineHtmlLabel(asHtml("Repeats: ${spanBold(repeatsValue)}"))
+    val durationLabel = MultiLineHtmlLabel(asHtml("Duration: " +
             spanBold("${insight.duration.value} ${insight.duration.unit}")))
 
     rowPanel.add(repeatsLabel)

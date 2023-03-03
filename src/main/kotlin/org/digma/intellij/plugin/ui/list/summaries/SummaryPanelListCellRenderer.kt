@@ -1,7 +1,6 @@
 package org.digma.intellij.plugin.ui.list.summaries
 
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.ActionLink
 import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.Borders.empty
@@ -12,19 +11,16 @@ import org.digma.intellij.plugin.model.rest.insights.SpanDurationChangeInsight
 import org.digma.intellij.plugin.model.rest.insights.SpanDurationsPercentile
 import org.digma.intellij.plugin.model.rest.insights.TopErrorFlowsInsight
 import org.digma.intellij.plugin.service.ErrorsActionsService
-import org.digma.intellij.plugin.ui.common.CopyableLabelHtml
 import org.digma.intellij.plugin.ui.common.Laf
 import org.digma.intellij.plugin.ui.common.asHtml
 import org.digma.intellij.plugin.ui.common.buildLinkTextWithGrayedAndDefaultLabelColorPart
-import org.digma.intellij.plugin.ui.list.AbstractPanelListCellRenderer
-import org.digma.intellij.plugin.ui.list.PanelsLayoutHelper
-import org.digma.intellij.plugin.ui.list.RoundedPanel
-import org.digma.intellij.plugin.ui.list.commonListItemPanel
+import org.digma.intellij.plugin.ui.list.*
 import org.digma.intellij.plugin.ui.list.errors.contentOfFirstAndLast
 import org.digma.intellij.plugin.ui.list.insights.genericPanelForSingleInsight
 import org.digma.intellij.plugin.ui.list.insights.percentileRowPanel
-import org.digma.intellij.plugin.ui.list.openWorkspaceFileForSpan
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
+import org.digma.intellij.plugin.ui.override.MultiLIneActionLink
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import javax.swing.JLabel
@@ -69,7 +65,7 @@ private fun buildError(model: TopErrorFlowsInsight.Error, project: Project): JPa
     // Linked title
     val relativeFrom = CodeObjectInfo.extractMethodName(model.sourceCodeObjectId)
     val linkText = buildLinkTextWithGrayedAndDefaultLabelColorPart(model.name, "from", relativeFrom)
-    val link = ActionLink(asHtml(linkText)) {
+    val link = MultiLIneActionLink(asHtml(linkText)) {
         val actionListener: ErrorsActionsService = project.getService(ErrorsActionsService::class.java)
         actionListener.showErrorDetails(model.uid)
     }
@@ -84,7 +80,7 @@ private fun buildError(model: TopErrorFlowsInsight.Error, project: Project): JPa
     titleAndCharacteristic.add(characteristic, BorderLayout.EAST)
 
     val firstAndLastHtml = contentOfFirstAndLast(model.firstOccurenceTime, model.lastOccurenceTime)
-    val firstAndLastTime = CopyableLabelHtml(asHtml(firstAndLastHtml))
+    val firstAndLastTime = MultiLineHtmlLabel(asHtml(firstAndLastHtml))
 
     panel.add(titleAndCharacteristic, BorderLayout.CENTER)
     panel.add(firstAndLastTime, BorderLayout.SOUTH)
@@ -114,11 +110,11 @@ private fun buildSpanDuration(value: SpanDurationChangeInsight.Change, moreData:
 
     val spanId = CodeObjectsUtil.createSpanId(value.span.instrumentationLibrary, value.span.name)
     val title = if (moreData.contains(spanId)) {
-        ActionLink(asHtml(value.span.displayName)) {
+        MultiLIneActionLink(asHtml(value.span.displayName)) {
             openWorkspaceFileForSpan(project, moreData, spanId)
         }
     } else{
-        JLabel(asHtml(value.span.displayName), SwingConstants.LEFT)
+        MultiLineHtmlLabel(asHtml(value.span.displayName), SwingConstants.LEFT)
     }
     title.toolTipText = value.span.displayName
     title.border = JBUI.Borders.emptyBottom(5)

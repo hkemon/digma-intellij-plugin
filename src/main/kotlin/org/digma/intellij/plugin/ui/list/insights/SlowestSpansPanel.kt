@@ -9,6 +9,7 @@ import org.digma.intellij.plugin.document.CodeObjectsUtil
 import org.digma.intellij.plugin.model.rest.insights.*
 import org.digma.intellij.plugin.ui.common.*
 import org.digma.intellij.plugin.ui.list.openWorkspaceFileForSpan
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import java.math.BigDecimal
@@ -29,7 +30,7 @@ fun slowestSpansPanel(project: Project, insight: SlowestSpansInsight, moreData: 
         if (moreData.contains(spanId)) {
             val normalizedDisplayName = StringUtils.normalizeSpace(displayName)
             val grayedDescription = asHtml(spanGrayed(description))
-            val descriptionLabel = JBLabel(grayedDescription, SwingConstants.LEFT)
+            val descriptionLabel = MultiLineHtmlLabel(grayedDescription, SwingConstants.LEFT)
             val link = ActionLink(normalizedDisplayName) {
                 openWorkspaceFileForSpan(project, moreData, spanId)
             }
@@ -42,7 +43,7 @@ fun slowestSpansPanel(project: Project, insight: SlowestSpansInsight, moreData: 
         } else {
             val normalizedDisplayName = StringUtils.normalizeSpace(displayName)
             val grayedDescription = asHtml(spanGrayed(description))
-            val descriptionLabel = JBLabel(grayedDescription, SwingConstants.LEFT)
+            val descriptionLabel = MultiLineHtmlLabel(grayedDescription, SwingConstants.LEFT)
 
             val displayNameLabel = JBLabel(normalizedDisplayName, SwingConstants.TRAILING)
             displayNameLabel.toolTipText = genToolTip(slowSpan)
@@ -82,8 +83,8 @@ fun spanSlowEndpointsPanel(project: Project, insight: SpanSlowEndpointsInsight):
         val routeInfo = EndpointSchema.getRouteInfo(slowEndpointInfo.endpointInfo.route)
         val shortRouteName =  routeInfo.shortName
 
-        val line1 = JBLabel(asHtml("${slowEndpointInfo.endpointInfo.serviceName}: <b>$shortRouteName</b>"))
-        val line2 = JBLabel(asHtml(descriptionOf(slowEndpointInfo)))
+        val line1 = MultiLineHtmlLabel(asHtml("${slowEndpointInfo.endpointInfo.serviceName}: <b>$shortRouteName</b>"))
+        val line2 = MultiLineHtmlLabel(asHtml(descriptionOf(slowEndpointInfo)))
 
         currContainerPanel.add(line1)
         currContainerPanel.add(line2)

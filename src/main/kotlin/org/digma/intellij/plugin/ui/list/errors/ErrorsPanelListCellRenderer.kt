@@ -1,7 +1,6 @@
 package org.digma.intellij.plugin.ui.list.errors
 
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.ActionLink
 import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.JBUI
 import org.digma.intellij.plugin.common.CommonUtils.prettyTimeOf
@@ -13,6 +12,8 @@ import org.digma.intellij.plugin.ui.list.AbstractPanelListCellRenderer
 import org.digma.intellij.plugin.ui.list.PanelsLayoutHelper
 import org.digma.intellij.plugin.ui.list.commonListItemPanel
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
+import org.digma.intellij.plugin.ui.override.MultiLIneActionLink
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -47,7 +48,7 @@ private fun createSingleErrorPanel(project: Project, model: CodeObjectError ): J
     }
 
     val linkText = buildLinkTextWithGrayedAndDefaultLabelColorPart(model.name,"from",relativeFrom)
-    val link = ActionLink(asHtml(linkText)){
+    val link = MultiLIneActionLink(asHtml(linkText)){
         val actionListener: ErrorsActionsService = project.getService(ErrorsActionsService::class.java)
         actionListener.showErrorDetails(model)
     }
@@ -57,7 +58,7 @@ private fun createSingleErrorPanel(project: Project, model: CodeObjectError ): J
     link.toolTipText = asHtml("${linkText}<br>${firstAndLast}" )
 
     val contentText = "${span(model.characteristic)}<br> $firstAndLast"
-    val content = CopyableLabelHtml(asHtml(contentText))
+    val content = MultiLineHtmlLabel(asHtml(contentText))
 
 
     val scorePanel = createScorePanelNoArrows(model)

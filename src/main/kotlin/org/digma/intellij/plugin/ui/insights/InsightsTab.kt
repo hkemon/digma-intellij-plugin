@@ -106,8 +106,8 @@ fun insightsPanel(project: Project): DigmaTabPanel {
                 cardLayout.show(cardsPanel, insightsModel.card.name)
             }
 
-            revalidate()
-            repaint()
+//            revalidate()
+//            repaint()
         }
     }
 

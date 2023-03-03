@@ -17,6 +17,7 @@ import org.digma.intellij.plugin.ui.common.asHtml
 import org.digma.intellij.plugin.ui.common.buildBoldTitleGrayedComment
 import org.digma.intellij.plugin.ui.list.PanelsLayoutHelper
 import org.digma.intellij.plugin.ui.list.commonListItemPanel
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
 import java.awt.BorderLayout
 import java.awt.Cursor
@@ -197,7 +198,7 @@ private fun getTimeInfoMessagePanel(
         "Data from: $formattedStartTime ago"
     }
 
-    val timeInfoMessageLabel = JLabel(asHtml(timeInfoMessage))
+    val timeInfoMessageLabel = MultiLineHtmlLabel(asHtml(timeInfoMessage))
 
     val timeInfoMessageLabelPanel = getDefaultSpanOneRecordPanel()
     timeInfoMessageLabelPanel.add(timeInfoMessageLabel, BorderLayout.NORTH)
@@ -242,7 +243,7 @@ private fun getPaginationPanel(paginationComponent: JComponent?): JPanel {
 }
 
 private fun getMessageLabel(title: String, description: String): JLabel {
-    val messageLabel = JLabel(buildBoldTitleGrayedComment(title,description), SwingConstants.LEFT)
+    val messageLabel = MultiLineHtmlLabel(buildBoldTitleGrayedComment(title,description), SwingConstants.LEFT)
     messageLabel.isOpaque = false
     messageLabel.verticalAlignment = SwingConstants.TOP
     return messageLabel

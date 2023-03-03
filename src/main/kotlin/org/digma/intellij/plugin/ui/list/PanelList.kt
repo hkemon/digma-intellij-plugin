@@ -2,14 +2,12 @@ package org.digma.intellij.plugin.ui.list
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.JBUI.Borders
 import org.digma.intellij.plugin.log.Log
 import org.digma.intellij.plugin.ui.common.Laf.scaleBorders
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
 import java.awt.Color
 import java.awt.Dimension
-import java.awt.Graphics
 import java.awt.Rectangle
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -18,7 +16,7 @@ import javax.swing.Scrollable
 import javax.swing.event.ListDataEvent
 import javax.swing.event.ListDataListener
 
-abstract class PanelList(val project: Project, private var model: PanelListModel, private val gapBetweenItems: Boolean = true) : JBPanel<PanelList>(), ListDataListener, Scrollable {
+abstract class PanelList(val project: Project, private var model: PanelListModel, private val gapBetweenItems: Boolean = true) : JPanel(), ListDataListener, Scrollable {
 
     private val logger = Logger.getInstance(PanelList::class.java)
 
@@ -73,11 +71,6 @@ abstract class PanelList(val project: Project, private var model: PanelListModel
         this.scrollablePanelList = scrollablePanelList
     }
 
-    override fun update(g: Graphics?) {
-        rebuild()
-        super.update(g)
-    }
-
 
 
     private fun rebuild() {
@@ -91,10 +84,10 @@ abstract class PanelList(val project: Project, private var model: PanelListModel
             this.components.forEach {
                 this.remove(it)
             }
-            revalidate()
+//            revalidate()
         }
 
-        if (model.size <= 0)
+        if (model == null || model.size <= 0)
             return
 
         for (i in 0 until model.size) run {
@@ -109,8 +102,9 @@ abstract class PanelList(val project: Project, private var model: PanelListModel
 
         }
 
-        revalidate()
-        repaint()
+//        setEarlyPreferredSize(this.components)
+//        revalidate()
+//        repaint()
     }
 
 

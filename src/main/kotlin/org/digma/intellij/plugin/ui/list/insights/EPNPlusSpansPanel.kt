@@ -14,6 +14,7 @@ import org.digma.intellij.plugin.ui.common.asHtml
 import org.digma.intellij.plugin.ui.common.spanBold
 import org.digma.intellij.plugin.ui.list.openWorkspaceFileForSpan
 import org.digma.intellij.plugin.ui.model.TraceSample
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
 import java.awt.BorderLayout
 import java.math.RoundingMode
@@ -111,9 +112,9 @@ private fun getRowPanel(span: HighlyOccurringSpanInfo): JPanel {
     val rowPanel = createDefaultBoxLayoutLineAxisPanel()
 
     val repeatsValue = "${span.occurrences} (median)"
-    val repeatsLabel = JLabel(asHtml("Repeats: ${spanBold(repeatsValue)}"))
+    val repeatsLabel = MultiLineHtmlLabel(asHtml("Repeats: ${spanBold(repeatsValue)}"))
     val impactLabel = getImpactLabel(span)
-    val durationLabel = JLabel(asHtml("Duration: " +
+    val durationLabel = MultiLineHtmlLabel(asHtml("Duration: " +
             spanBold("${span.duration.value} ${span.duration.unit}")))
 
     rowPanel.add(repeatsLabel)
@@ -131,7 +132,7 @@ private fun getImpactLabel(span: HighlyOccurringSpanInfo): JLabel {
     } else {
         "${fraction.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()} of request"
     }
-    return JLabel(asHtml("Impact: ${spanBold(fractionSt)}"))
+    return MultiLineHtmlLabel(asHtml("Impact: ${spanBold(fractionSt)}"))
 }
 
 private fun buildENPlusInsightRowsPanel(

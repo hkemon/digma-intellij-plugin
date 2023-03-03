@@ -77,7 +77,7 @@ abstract class AbstractViewService(val project: Project) : Disposable {
 
         val r = Runnable {
             toolWindow?.contentManager?.setSelectedContent(toolWindowContent!!, false)
-            toolWindowContent?.component?.revalidate()
+//            toolWindowContent?.component?.revalidate()
             panel?.reset()
         }
 
@@ -130,8 +130,8 @@ abstract class AbstractViewService(val project: Project) : Disposable {
                     //reset focusable component methods, some panels are dynamic in what they return, see for example NoConnectionWrapper
                     toolWindowContent?.setPreferredFocusedComponent { panel?.getPreferredFocusedComponent() }
                     toolWindowContent?.preferredFocusableComponent = panel?.getPreferredFocusableComponent()
-                    toolWindowContent?.component?.revalidate()
-                    toolWindow?.component?.revalidate()
+//                    toolWindowContent?.component?.revalidate()
+//                    toolWindow?.component?.revalidate()
                 }
             }
 

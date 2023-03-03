@@ -16,6 +16,7 @@ import org.digma.intellij.plugin.ui.list.PanelsLayoutHelper
 import org.digma.intellij.plugin.ui.model.insights.InsightGroupType.HttpEndpoint
 import org.digma.intellij.plugin.ui.model.insights.InsightGroupType.Span
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -94,7 +95,7 @@ class InsightsListCellRenderer : AbstractPanelListCellRenderer() {
                 icon(icon).applyToComponent {
                     toolTipText = labelText
                 }.horizontalAlign(HorizontalAlign.LEFT).gap(RightGap.SMALL)
-                cell(CopyableLabelHtml(labelText)).applyToComponent {
+                cell(MultiLineHtmlLabel(labelText)).applyToComponent {
                     toolTipText = labelText
                 }.horizontalAlign(HorizontalAlign.LEFT)
             }

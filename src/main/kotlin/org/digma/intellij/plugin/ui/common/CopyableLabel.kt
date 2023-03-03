@@ -2,7 +2,9 @@ package org.digma.intellij.plugin.ui.common
 
 import org.digma.intellij.plugin.ui.common.Laf.Colors.Companion.DEFAULT_LABEL_FOREGROUND
 import org.digma.intellij.plugin.ui.common.Laf.Fonts.Companion.DEFAULT_LABEL_FONT
+import org.digma.intellij.plugin.ui.override.calculatePreferredSize
 import java.awt.Color
+import java.awt.Dimension
 import java.awt.Font
 import java.awt.Rectangle
 import javax.swing.JTextPane
@@ -47,6 +49,12 @@ class CopyableLabelHtml(myText: String) : BaseCopyableLabel(myText) {
     init {
         contentType = "text/html"
         construct(myText, DEFAULT_FOREGROUND)
+    }
+
+
+    override fun getPreferredSize(): Dimension {
+        calculatePreferredSize()
+        return super.getPreferredSize()
     }
 }
 

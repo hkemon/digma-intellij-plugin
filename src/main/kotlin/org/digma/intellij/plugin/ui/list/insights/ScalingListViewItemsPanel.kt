@@ -15,6 +15,7 @@ import org.digma.intellij.plugin.ui.common.*
 import org.digma.intellij.plugin.ui.list.ListItemActionButton
 import org.digma.intellij.plugin.ui.list.openWorkspaceFileForSpan
 import org.digma.intellij.plugin.ui.model.TraceSample
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -101,8 +102,8 @@ fun getRootCauseSpanPanel(project: Project, moreData: HashMap<String, Any>, root
 private fun getScalingCalculationsPanel(insight: SpanScalingInsight): JPanel {
     val scalingBodyPanel = createDefaultBoxLayoutLineAxisPanel()
 
-    val concurrencyLabel = JLabel(asHtml("Tested concurrency: ${spanBold(insight.maxConcurrency.toString())}"))
-    val durationLabel = JLabel(asHtml("Duration: " +
+    val concurrencyLabel = MultiLineHtmlLabel(asHtml("Tested concurrency: ${spanBold(insight.maxConcurrency.toString())}"))
+    val durationLabel = MultiLineHtmlLabel(asHtml("Duration: " +
             spanBold("${insight.minDuration.value} ${insight.minDuration.unit} - ${insight.maxDuration.value} ${insight.maxDuration.unit}")))
 
     scalingBodyPanel.add(concurrencyLabel)

@@ -7,15 +7,15 @@ import org.digma.intellij.plugin.model.rest.insights.SpanFlow
 import org.digma.intellij.plugin.model.rest.insights.SpanUsagesInsight
 import org.digma.intellij.plugin.ui.common.*
 import org.digma.intellij.plugin.ui.model.TraceSample
+import org.digma.intellij.plugin.ui.override.MultiLineHtmlLabel
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
-import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
 fun spanUsagesPanel(project: Project, spanUsagesInsight: SpanUsagesInsight): JPanel {
 
-    val title = JLabel(asHtml(spanBold("Top Usage")), SwingConstants.LEFT)
+    val title = MultiLineHtmlLabel(asHtml(spanBold("Top Usage")), SwingConstants.LEFT)
     title.isOpaque = false
 
     val flowsListPanel = JBPanel<JBPanel<*>>()
@@ -28,7 +28,7 @@ fun spanUsagesPanel(project: Project, spanUsagesInsight: SpanUsagesInsight): JPa
         val line = JPanel(BorderLayout())
         line.isOpaque = false
 
-        val percentageLabel = CopyableLabelHtml(asHtml("${span(String.format("%.1f", spanFlow.percentage))}% "))
+        val percentageLabel = MultiLineHtmlLabel(asHtml("${span(String.format("%.1f", spanFlow.percentage))}% "))
         percentageLabel.border = JBUI.Borders.emptyRight(5)
 
         line.add(percentageLabel, BorderLayout.WEST)
