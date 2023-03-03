@@ -134,7 +134,7 @@ public class RefreshScheduler {
                     refreshAction.run();
                 }
             }
-        },10,10,TimeUnit.SECONDS);
+        },5,5,TimeUnit.SECONDS);
 
         return previousTask;
     }
