@@ -19,6 +19,7 @@ import org.digma.intellij.plugin.ui.service.InsightsViewService;
 import org.digma.intellij.plugin.ui.service.SummaryViewService;
 
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * A service to implement the interactions between listeners and UI components.
@@ -39,6 +40,7 @@ public class EditorInteractionService implements CaretContextService, Disposable
     private final EnvironmentsSupplier environmentsSupplier;
     private final BackendConnectionMonitor backendConnectionMonitor;
 
+    private final RefreshScheduler refreshScheduler;
 
     public EditorInteractionService(Project project) {
         this.project = project;
@@ -49,6 +51,8 @@ public class EditorInteractionService implements CaretContextService, Disposable
         backendConnectionMonitor = project.getService(BackendConnectionMonitor.class);
         var analyticsService = project.getService(AnalyticsService.class);
         environmentsSupplier = analyticsService.getEnvironment();
+        refreshScheduler = new RefreshScheduler(project);
+
     }
 
     public static CaretContextService getInstance(Project project) {
@@ -100,12 +104,40 @@ public class EditorInteractionService implements CaretContextService, Disposable
         }
 
 
+
 //        if (runningTask != null) {
 //            runningTask.cancel();
 //        }
 
 //        var stopWatch = StopWatch.createStarted();
 
+
+
+        ScheduledFuture previousTask = refreshScheduler.addRefreshTask(methodUnderCaret, () -> {
+            Log.log(LOGGER::debug, "Executing refresh task for contextChanged for {}", methodUnderCaret.getId());
+            var stopWatch = StopWatch.createStarted();
+            try {
+                contextChangedImpl(methodUnderCaret);
+            } finally {
+                stopWatch.stop();
+                Log.log(LOGGER::debug, "refresh task for contextChanged took {} milliseconds", stopWatch.getTime(java.util.concurrent.TimeUnit.MILLISECONDS));
+            }
+        });
+
+
+        //todo: this shouldn't happen, not more then a few milliseconds.
+        // we have to wait for the previous task to cancel or the view may be updated with previous data.
+        // if nothing hangs too much then there shouldn't be a problem.
+        // the call to backend can hang for some reason, in that case the previous task may not cancel immediately.
+        // one way to prevent that is to lock the call to contextChangedImpl in the refresh task , that will make sure
+        // that calls are done sequentially and not overriding each other.
+        // but as said , if nothing hangs then there should be no problem and the previous task should have already been canceled.
+        while(previousTask != null && !previousTask.isCancelled()){
+            Log.log(LOGGER::warn, "Previous refresh task was not canceled yet, waiting.. if waiting too long then we have a problem");
+        }
+
+        //there is probably already a refresh task from the previous execution. hopefully it will be canceled
+        //before this Backgroundable executes
         Backgroundable.ensureBackground(project, "Digma: Context change", () -> {
             Log.log(LOGGER::debug, "Executing contextChanged in background for {}", methodUnderCaret.getId());
             var stopWatch = StopWatch.createStarted();
@@ -219,6 +251,7 @@ public class EditorInteractionService implements CaretContextService, Disposable
     @Override
     public void dispose() {
         Log.log(LOGGER::debug, "disposing..");
+        refreshScheduler.dispose();
     }
 
 }

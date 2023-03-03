@@ -2,6 +2,7 @@ package org.digma.intellij.plugin.document;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.digma.intellij.plugin.analytics.AnalyticsService;
 import org.digma.intellij.plugin.analytics.AnalyticsServiceException;
@@ -30,6 +31,7 @@ public class DocumentInfoContainer {
 
     private final Logger LOGGER = Logger.getInstance(DocumentInfoContainer.class);
 
+    private final Project project;
     private final PsiFile psiFile;
 
     private final Language language;
@@ -42,7 +44,8 @@ public class DocumentInfoContainer {
     private UsageStatusResult usageStatus = EmptyUsageStatusResult;
     private UsageStatusResult usageStatusOfErrors = EmptyUsageStatusResult;
 
-    public DocumentInfoContainer(@NotNull PsiFile psiFile, @NotNull AnalyticsService analyticsService) {
+    public DocumentInfoContainer(Project project, @NotNull PsiFile psiFile, @NotNull AnalyticsService analyticsService) {
+        this.project = project;
         this.psiFile = psiFile;
         this.analyticsService = analyticsService;
         language = psiFile.getLanguage();
@@ -66,11 +69,14 @@ public class DocumentInfoContainer {
         this.documentInfo = documentInfo;
 
         loadAllInsightsForCurrentDocument();
+
+        notifyDocumentInfoChanged(psiFile);
     }
 
     public void updateCache() {
         Log.log(LOGGER::debug, "Refreshing document backend data for {}: ", psiFile.getVirtualFile());
         loadAllInsightsForCurrentDocument();
+        notifyDocumentInfoChanged(psiFile);
     }
 
     private void loadAllInsightsForCurrentDocument() {
@@ -138,4 +144,10 @@ public class DocumentInfoContainer {
         return documentInfo.getMethods().get(id);
     }
 
+
+    public void notifyDocumentInfoChanged(PsiFile psiFile) {
+        Log.log(LOGGER::debug, "Notifying DocumentInfo changed for {}",psiFile.getVirtualFile());
+        DocumentInfoChanged publisher = project.getMessageBus().syncPublisher(DocumentInfoChanged.DOCUMENT_INFO_CHANGED_TOPIC);
+        publisher.documentInfoChanged(psiFile);
+    }
 }
