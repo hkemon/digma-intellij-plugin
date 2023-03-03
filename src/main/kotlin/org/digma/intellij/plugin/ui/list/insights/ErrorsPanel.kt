@@ -11,6 +11,7 @@ import org.digma.intellij.plugin.ui.common.buildLinkTextWithGrayedAndDefaultLabe
 import org.digma.intellij.plugin.ui.list.ListItemActionButton
 import org.digma.intellij.plugin.ui.override.MultiLIneActionLink
 import java.awt.GridLayout
+import java.time.LocalDateTime
 import javax.swing.JPanel
 
 
@@ -44,7 +45,7 @@ fun errorsPanel(project: Project, modelObject: ErrorInsight): JPanel {
     return createInsightPanel(
             project = project,
             insight = modelObject,
-            title = "Errors",
+            title = "Errors "+ LocalDateTime.now(), //add the time just for testing
             description = "$errorCount errors($unhandled unhandled, $unexpected unexpected)",
             iconsList = listOf(Laf.Icons.Insight.ERRORS),
             bodyPanel = errorsListPanel,
