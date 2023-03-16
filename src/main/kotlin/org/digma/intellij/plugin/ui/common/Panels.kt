@@ -10,6 +10,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
 import org.digma.intellij.plugin.analytics.AnalyticsService
+import org.digma.intellij.plugin.refreshInsightsTask.RefreshService
 import org.digma.intellij.plugin.ui.errors.GeneralRefreshIconButton
 import org.digma.intellij.plugin.ui.model.NOT_SUPPORTED_OBJECT_MSG
 import org.digma.intellij.plugin.ui.model.PanelModel
@@ -17,11 +18,14 @@ import org.digma.intellij.plugin.ui.model.errors.ErrorsModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
-import org.digma.intellij.plugin.refreshInsightsTask.RefreshService
 import java.awt.BorderLayout
 import java.awt.Cursor
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JButton
+import javax.swing.JLabel
+import javax.swing.JPanel
 
 
 private const val REFRESH_ALL_INSIGHTS_AND_ERRORS = "Refresh"
@@ -43,6 +47,32 @@ fun noCodeObjectWarningPanel(model: PanelModel): DialogPanel {
                     getter = { getNoInfoMessage(model) },
                     setter = {})
             )
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+    }.andTransparent().withBorder(JBUI.Borders.empty())
+}
+
+fun createPendingInsightsPanel(): DialogPanel {
+    return panel {
+        row {
+            icon(AllIcons.Toolwindows.Notifications)
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+        row {
+            label("Processing Insights...")
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+    }.andTransparent().withBorder(JBUI.Borders.empty())
+}
+
+fun createLoadingInsightsPanel(): DialogPanel {
+    return panel {
+        row {
+            icon(AllIcons.General.OpenDisk)
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+        row {
+            label("Loading...")
                 .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
     }.andTransparent().withBorder(JBUI.Borders.empty())

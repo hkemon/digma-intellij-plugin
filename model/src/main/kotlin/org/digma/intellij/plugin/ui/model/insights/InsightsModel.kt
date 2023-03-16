@@ -17,6 +17,7 @@ class InsightsModel : PanelModel {
     var previewListViewItems: List<ListViewItem<String>> = Collections.emptyList()
     var usageStatusResult: UsageStatusResult = EmptyUsageStatusResult
     var card: InsightsTabCard = InsightsTabCard.INSIGHTS
+    var status: InsightStatus = InsightStatus.Unknown
     var scope: Scope = EmptyScope("")
 
 
@@ -58,4 +59,11 @@ class InsightsModel : PanelModel {
 
 enum class InsightsTabCard {
     INSIGHTS, PREVIEW
+}
+
+enum class InsightStatus {
+    Unknown, // initial state, when insights is 0, might be changed to something else
+    InsightExist, // insight count is greater than 0
+    InsightPending, // backend is aware of the code objects, but still no insights, soon there will be
+    NoSpanData, // backend is not aware of code objects
 }

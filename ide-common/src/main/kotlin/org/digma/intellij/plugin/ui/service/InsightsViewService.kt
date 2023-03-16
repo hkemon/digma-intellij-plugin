@@ -2,6 +2,8 @@ package org.digma.intellij.plugin.ui.service
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.rd.util.launchBackground
+import com.jetbrains.rd.util.lifetime.LifetimeDefinition
 import org.digma.intellij.plugin.common.Backgroundable
 import org.digma.intellij.plugin.document.DocumentInfoContainer
 import org.digma.intellij.plugin.insights.InsightsProvider
@@ -12,10 +14,11 @@ import org.digma.intellij.plugin.model.discovery.SpanInfo
 import org.digma.intellij.plugin.ui.model.DocumentScope
 import org.digma.intellij.plugin.ui.model.EmptyScope
 import org.digma.intellij.plugin.ui.model.MethodScope
+import org.digma.intellij.plugin.ui.model.insights.InsightStatus
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsTabCard
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.locks.ReentrantLock
 import java.util.stream.Collectors
 
@@ -59,6 +62,15 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
             model.insightsCount = insightsListContainer.count
             model.card = InsightsTabCard.INSIGHTS
 
+            if (!insightsListContainer.listViewItems.isNullOrEmpty()) {
+                model.status = InsightStatus.InsightExist
+            } else {
+                model.status = InsightStatus.Unknown
+                val newLifetimeDefinition = LifetimeDefinition()
+                newLifetimeDefinition.lifetime.launchBackground {
+                    fetchForInsightStatusAndUpdateUi(methodInfo, model)
+                }
+            }
             updateUi()
         } finally {
             if (lock.isHeldByCurrentThread) {
@@ -68,6 +80,15 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
         }
     }
 
+    fun fetchForInsightStatusAndUpdateUi(methodInfo: MethodInfo, model: InsightsModel) {
+        //TODO: call backend, currently just adding sleep, to emulate wait in the ui
+        Thread.sleep(300)
+
+        val randStatus = InsightStatus.values().toList().shuffled()[0]
+        model.status = randStatus
+
+        updateUi()
+    }
 
     fun contextChangeNoMethodInfo(dummy: MethodInfo) {
 
@@ -144,7 +165,8 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
     private fun getDocumentPreviewItems(documentInfoContainer: DocumentInfoContainer): List<ListViewItem<String>> {
 
         val listViewItems = ArrayList<ListViewItem<String>>()
-        val docSummariesIds: Set<String> = documentInfoContainer.allInsights.stream().map { it.codeObjectId }.collect(Collectors.toSet())
+        val docSummariesIds: Set<String> =
+            documentInfoContainer.allInsights.stream().map { it.codeObjectId }.collect(Collectors.toSet())
 
         documentInfoContainer.documentInfo.methods.forEach { (id, methodInfo) ->
             val ids = methodInfo.spans.stream().map { obj: SpanInfo -> obj.id }
