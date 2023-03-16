@@ -108,6 +108,14 @@ object Laf  {
                 @JvmStatic val SPAN_DURATION_ROSE = loadAndScaleIconByWidth("/icons/rose.png", 8)
             }
         }
+
+        class Common {
+            companion object {
+                @JvmStatic val Loading = AllIcons.Actions.BuildLoadChanges
+                @JvmStatic val Mascot64 = loadAndScaleIconByWidth("/icons/digma.png", 64)
+            }
+        }
+
         companion object {
             private fun loadAndScaleInsightIcon(path: String): Icon {
                 return loadAndScaleInsightIconByWidth(path)

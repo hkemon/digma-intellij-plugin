@@ -55,7 +55,7 @@ fun noCodeObjectWarningPanel(model: PanelModel): DialogPanel {
 fun createPendingInsightsPanel(): DialogPanel {
     return panel {
         row {
-            icon(AllIcons.Toolwindows.Notifications)
+            icon(Laf.Icons.Common.Mascot64)
                 .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
         row {
@@ -68,7 +68,7 @@ fun createPendingInsightsPanel(): DialogPanel {
 fun createLoadingInsightsPanel(): DialogPanel {
     return panel {
         row {
-            icon(AllIcons.General.OpenDisk)
+            icon(Laf.Icons.Common.Loading)
                 .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
         row {
