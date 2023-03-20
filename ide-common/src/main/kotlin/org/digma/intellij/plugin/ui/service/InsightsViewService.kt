@@ -14,7 +14,7 @@ import org.digma.intellij.plugin.model.discovery.SpanInfo
 import org.digma.intellij.plugin.ui.model.DocumentScope
 import org.digma.intellij.plugin.ui.model.EmptyScope
 import org.digma.intellij.plugin.ui.model.MethodScope
-import org.digma.intellij.plugin.ui.model.insights.InsightStatus
+import org.digma.intellij.plugin.ui.model.insights.UiInsightStatus
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsTabCard
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
@@ -63,9 +63,9 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
             model.card = InsightsTabCard.INSIGHTS
 
             if (!insightsListContainer.listViewItems.isNullOrEmpty()) {
-                model.status = InsightStatus.InsightExist
+                model.status = UiInsightStatus.InsightExist
             } else {
-                model.status = InsightStatus.Unknown
+                model.status = UiInsightStatus.Unknown
                 val newLifetimeDefinition = LifetimeDefinition()
                 newLifetimeDefinition.lifetime.launchBackground {
                     fetchForInsightStatusAndUpdateUi(methodInfo, model)
@@ -82,9 +82,10 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
 
     fun fetchForInsightStatusAndUpdateUi(methodInfo: MethodInfo, model: InsightsModel) {
         //TODO: call backend, currently just adding sleep, to emulate wait in the ui
+        //val insightStatus = insightsProvider.getInsightStatus(methodInfo)
         Thread.sleep(300)
 
-        val randStatus = InsightStatus.values().toList().shuffled()[0]
+        val randStatus = UiInsightStatus.values().toList().shuffled()[0]
         model.status = randStatus
 
         updateUi()

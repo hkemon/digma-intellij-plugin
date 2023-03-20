@@ -18,7 +18,7 @@ import org.digma.intellij.plugin.ui.list.ScrollablePanelList
 import org.digma.intellij.plugin.ui.list.insights.InsightsList
 import org.digma.intellij.plugin.ui.list.insights.PreviewList
 import org.digma.intellij.plugin.ui.list.listBackground
-import org.digma.intellij.plugin.ui.model.insights.InsightStatus
+import org.digma.intellij.plugin.ui.model.insights.UiInsightStatus
 import org.digma.intellij.plugin.ui.model.insights.InsightsTabCard
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
 import org.digma.intellij.plugin.ui.service.InsightsViewService
@@ -86,7 +86,7 @@ fun insightsPanel(project: Project): DigmaTabPanel {
     cardsPanel.add(previewPanel, InsightsTabCard.PREVIEW.name)
     cardsPanel.add(noInfoWarningPanel, NO_INFO_CARD_NAME)
     cardsPanel.add(loadingInsightsPanel, LOADING_INSIGHTS_CARD_NAME)
-    cardsPanel.add(pendingInsightsPanel, InsightStatus.InsightPending.name)
+    cardsPanel.add(pendingInsightsPanel, UiInsightStatus.InsightPending.name)
     cardLayout.addLayoutComponent(insightsList, InsightsTabCard.INSIGHTS.name)
     cardLayout.addLayoutComponent(previewPanel, InsightsTabCard.PREVIEW.name)
     cardLayout.addLayoutComponent(noInfoWarningPanel, NO_INFO_CARD_NAME)
@@ -113,8 +113,8 @@ fun insightsPanel(project: Project): DigmaTabPanel {
 
             if (insightsList.getModel().size == 0 && insightsModel.card == InsightsTabCard.INSIGHTS) {
                 val cardName = when (insightsModel.status) {
-                    InsightStatus.Unknown -> LOADING_INSIGHTS_CARD_NAME
-                    InsightStatus.InsightPending -> InsightStatus.InsightPending.name
+                    UiInsightStatus.Unknown -> LOADING_INSIGHTS_CARD_NAME
+                    UiInsightStatus.InsightPending -> UiInsightStatus.InsightPending.name
                     else -> NO_INFO_CARD_NAME
                 }
                 cardLayout.show(cardsPanel, cardName)
