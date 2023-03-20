@@ -83,18 +83,23 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
 
     fun fetchForInsightStatusAndUpdateUi(methodInfo: MethodInfo, model: InsightsModel) {
         val insightStatus = insightsProvider.getInsightStatus(methodInfo)
-        val uiInsightStatus = ToUiInsightStatus(insightStatus);
+        val uiInsightStatus = ToUiInsightStatus(insightStatus, methodInfo.hasRelatedCodeObjectIds());
 
         model.status = uiInsightStatus
 
         updateUi()
     }
 
-    fun ToUiInsightStatus(status: InsightStatus): UiInsightStatus {
+    fun ToUiInsightStatus(status: InsightStatus, methodHasRelatedCodeObjectIds: Boolean): UiInsightStatus {
         return when (status) {
             InsightStatus.InsightExist -> UiInsightStatus.InsightExist
             InsightStatus.InsightPending -> UiInsightStatus.InsightPending
-            InsightStatus.NoSpanData -> UiInsightStatus.NoSpanData
+            InsightStatus.NoSpanData -> {
+                if (methodHasRelatedCodeObjectIds)
+                    return UiInsightStatus.NoSpanData
+                else
+                    return UiInsightStatus.InsightExist // really no insights
+            }
             else -> UiInsightStatus.Unknown
         }
     }
