@@ -11,12 +11,13 @@ import org.digma.intellij.plugin.log.Log
 import org.digma.intellij.plugin.model.Models.Empties.EmptyUsageStatusResult
 import org.digma.intellij.plugin.model.discovery.MethodInfo
 import org.digma.intellij.plugin.model.discovery.SpanInfo
+import org.digma.intellij.plugin.model.rest.insights.InsightStatus
 import org.digma.intellij.plugin.ui.model.DocumentScope
 import org.digma.intellij.plugin.ui.model.EmptyScope
 import org.digma.intellij.plugin.ui.model.MethodScope
-import org.digma.intellij.plugin.ui.model.insights.UiInsightStatus
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsTabCard
+import org.digma.intellij.plugin.ui.model.insights.UiInsightStatus
 import org.digma.intellij.plugin.ui.model.listview.ListViewItem
 import java.util.Collections
 import java.util.concurrent.locks.ReentrantLock
@@ -46,7 +47,7 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
     }
 
     fun updateInsightsModel(
-        methodInfo: MethodInfo
+            methodInfo: MethodInfo
     ) {
         lock.lock()
         Log.log(logger::debug, "Lock acquired for updateInsightsModel to {}. ", methodInfo)
@@ -81,14 +82,21 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
     }
 
     fun fetchForInsightStatusAndUpdateUi(methodInfo: MethodInfo, model: InsightsModel) {
-        //TODO: call backend, currently just adding sleep, to emulate wait in the ui
-        //val insightStatus = insightsProvider.getInsightStatus(methodInfo)
-        Thread.sleep(300)
+        val insightStatus = insightsProvider.getInsightStatus(methodInfo)
+        val uiInsightStatus = ToUiInsightStatus(insightStatus);
 
-        val randStatus = UiInsightStatus.values().toList().shuffled()[0]
-        model.status = randStatus
+        model.status = uiInsightStatus
 
         updateUi()
+    }
+
+    fun ToUiInsightStatus(status: InsightStatus): UiInsightStatus {
+        return when (status) {
+            InsightStatus.InsightExist -> UiInsightStatus.InsightExist
+            InsightStatus.InsightPending -> UiInsightStatus.InsightPending
+            InsightStatus.NoSpanData -> UiInsightStatus.NoSpanData
+            else -> UiInsightStatus.Unknown
+        }
     }
 
     fun contextChangeNoMethodInfo(dummy: MethodInfo) {
@@ -135,8 +143,8 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
     }
 
     fun showDocumentPreviewList(
-        documentInfoContainer: DocumentInfoContainer?,
-        fileUri: String
+            documentInfoContainer: DocumentInfoContainer?,
+            fileUri: String
     ) {
 
         Log.log(logger::debug, "showDocumentPreviewList for {}. ", fileUri)
@@ -167,11 +175,11 @@ class InsightsViewService(project: Project) : AbstractViewService(project) {
 
         val listViewItems = ArrayList<ListViewItem<String>>()
         val docSummariesIds: Set<String> =
-            documentInfoContainer.allInsights.stream().map { it.codeObjectId }.collect(Collectors.toSet())
+                documentInfoContainer.allInsights.stream().map { it.codeObjectId }.collect(Collectors.toSet())
 
         documentInfoContainer.documentInfo.methods.forEach { (id, methodInfo) ->
             val ids = methodInfo.spans.stream().map { obj: SpanInfo -> obj.id }
-                .collect(Collectors.toList())
+                    .collect(Collectors.toList())
             ids.add(id)
 
             if (docSummariesIds.any { ids.contains(it) }) {
