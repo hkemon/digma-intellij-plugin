@@ -31,6 +31,7 @@ import org.digma.intellij.plugin.persistence.PersistenceService;
 import org.digma.intellij.plugin.settings.SettingsState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.net.ssl.SSLException;
 import java.io.Closeable;
@@ -195,11 +196,18 @@ public class AnalyticsService implements Disposable {
 
     public CodeObjectInsightsStatusResponse getCodeObjectInsightStatus(List<MethodInfo> methodInfos) throws AnalyticsServiceException {
         var env = getCurrentEnvironment();
-        var methodWithCodeObjects = methodInfos.stream().map(methodInfo -> new MethodWithCodeObjects(methodInfo.getId(),
-                        methodInfo.getSpans().stream().map(org.digma.intellij.plugin.model.discovery.SpanInfo::idWithType).toList(),
-                        methodInfo.getEndpoints().stream().map(org.digma.intellij.plugin.model.discovery.EndpointInfo::idWithType).toList()))
+        var methodWithCodeObjects = methodInfos.stream()
+                .map(it -> ToMethodWithCodeObjects(it))
                 .toList();
         return executeCatching(() -> analyticsProviderProxy.getCodeObjectInsightStatus(new InsightOfMethodsRequest(env, methodWithCodeObjects)));
+    }
+
+    @VisibleForTesting
+    public static MethodWithCodeObjects ToMethodWithCodeObjects(MethodInfo methodInfo) {
+        return new MethodWithCodeObjects(methodInfo.idWithType(),
+                methodInfo.getSpans().stream().map(it -> it.idWithType()).toList(),
+                methodInfo.getEndpoints().stream().map(it -> it.idWithType()).toList()
+        );
     }
 
     public void setInsightCustomStartTime(String codeObjectId, InsightType insightType) throws AnalyticsServiceException {
