@@ -29,6 +29,7 @@ import javax.swing.JPanel
 
 
 private const val REFRESH_ALL_INSIGHTS_AND_ERRORS = "Refresh"
+private const val NO_DATA_YET_DETAIL_DESCRIPTION = "Trigger actions that call this code object to learn more about its runtime behavior"
 
 fun noCodeObjectWarningPanel(model: PanelModel): DialogPanel {
 
@@ -78,6 +79,22 @@ fun createLoadingInsightsPanel(): DialogPanel {
     }.andTransparent().withBorder(JBUI.Borders.empty())
 }
 
+fun createNoDataYetPanel(): DialogPanel {
+    return panel {
+        row {
+            icon(Laf.Icons.Common.NoDataYet)
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.SMALL)
+        row {
+            label("No Data Yet")
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+        row {
+            label(asHtml(NO_DATA_YET_DETAIL_DESCRIPTION))
+                .horizontalAlign(HorizontalAlign.CENTER)
+        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+    }.andTransparent().withBorder(JBUI.Borders.empty())
+}
 
 private fun getNoInfoMessage(model: PanelModel): String {
     var msg = if (model is InsightsModel) "No insights" else "No errors"
