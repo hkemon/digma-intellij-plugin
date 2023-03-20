@@ -10,10 +10,18 @@ import org.digma.intellij.plugin.common.Backgroundable;
 import org.digma.intellij.plugin.common.CommonUtils;
 import org.digma.intellij.plugin.log.Log;
 import org.digma.intellij.plugin.model.InsightType;
+import org.digma.intellij.plugin.model.discovery.MethodInfo;
 import org.digma.intellij.plugin.model.rest.debugger.DebuggerEventRequest;
 import org.digma.intellij.plugin.model.rest.errordetails.CodeObjectErrorDetails;
 import org.digma.intellij.plugin.model.rest.errors.CodeObjectError;
-import org.digma.intellij.plugin.model.rest.insights.*;
+import org.digma.intellij.plugin.model.rest.insights.CodeObjectInsight;
+import org.digma.intellij.plugin.model.rest.insights.CodeObjectInsightsStatusResponse;
+import org.digma.intellij.plugin.model.rest.insights.CustomStartTimeInsightRequest;
+import org.digma.intellij.plugin.model.rest.insights.GlobalInsight;
+import org.digma.intellij.plugin.model.rest.insights.InsightOfMethodsRequest;
+import org.digma.intellij.plugin.model.rest.insights.InsightsRequest;
+import org.digma.intellij.plugin.model.rest.insights.MethodWithCodeObjects;
+import org.digma.intellij.plugin.model.rest.insights.SpanHistogramQuery;
 import org.digma.intellij.plugin.model.rest.recentactivity.RecentActivityRequest;
 import org.digma.intellij.plugin.model.rest.recentactivity.RecentActivityResult;
 import org.digma.intellij.plugin.model.rest.usage.UsageStatusRequest;
@@ -36,7 +44,13 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.net.http.HttpTimeoutException;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -177,6 +191,15 @@ public class AnalyticsService implements Disposable {
         var env = getCurrentEnvironment();
         Log.log(LOGGER::debug, "Requesting insights for next codeObjectId {} and next environment {}", codeObjectIds, env);
         return executeCatching(() -> analyticsProviderProxy.getErrorsOfCodeObject(env, codeObjectIds));
+    }
+
+    public CodeObjectInsightsStatusResponse getCodeObjectInsightStatus(List<MethodInfo> methodInfos) throws AnalyticsServiceException {
+        var env = getCurrentEnvironment();
+        var methodWithCodeObjects = methodInfos.stream().map(methodInfo -> new MethodWithCodeObjects(methodInfo.getId(),
+                        methodInfo.getSpans().stream().map(org.digma.intellij.plugin.model.discovery.SpanInfo::idWithType).toList(),
+                        methodInfo.getEndpoints().stream().map(org.digma.intellij.plugin.model.discovery.EndpointInfo::idWithType).toList()))
+                .toList();
+        return executeCatching(() -> analyticsProviderProxy.getCodeObjectInsightStatus(new InsightOfMethodsRequest(env, methodWithCodeObjects)));
     }
 
     public void setInsightCustomStartTime(String codeObjectId, InsightType insightType) throws AnalyticsServiceException {
