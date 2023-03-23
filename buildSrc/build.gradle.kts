@@ -12,9 +12,9 @@ repositories {
 
 dependencies {
     //Note: gradle-intellij-plugin 1.5.3 has some bugs with runIde that does not detect changes in kotlin UI DSL
-    implementation("org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.11.0")
+    implementation("org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.13.2")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21")
-    implementation("com.dorongold.plugins:task-tree:2.1.0")
+    implementation("com.dorongold.plugins:task-tree:2.1.1")
     implementation("com.glovoapp.semantic-versioning:com.glovoapp.semantic-versioning.gradle.plugin:1.1.10")
 }
 
