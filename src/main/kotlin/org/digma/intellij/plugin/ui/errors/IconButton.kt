@@ -1,20 +1,47 @@
 package org.digma.intellij.plugin.ui.errors
 
 import org.digma.intellij.plugin.ui.common.Laf
+import java.awt.Cursor
 import java.awt.Graphics
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 import javax.swing.JButton
 
+internal class IconButton : JButton {
 
-internal class IconButton(icon: Icon) : JButton(icon) {
+    private val defaultIcon: Icon
+    private val selectedIcon: Icon?
 
-    init {
+    constructor(defaultIcon: Icon, selectedIcon: Icon? = null) : super(defaultIcon) {
+        this.defaultIcon = defaultIcon
+        this.selectedIcon = selectedIcon
+
+        initButton()
+
+        addActionListener {
+            isSelected = !isSelected
+        }
+    }
+
+    constructor(defaultIcon: Icon, selectedIcon: Icon?, action: () -> Unit) : super(defaultIcon) {
+        this.defaultIcon = defaultIcon
+        this.selectedIcon = selectedIcon
+
+        initButton()
+
+        addActionListener {
+            isSelected = !isSelected
+            action()
+        }
+    }
+
+    private fun initButton() {
         isOpaque = false
         isContentAreaFilled = false
         isBorderPainted = false
         background = Laf.Colors.TRANSPARENT
+        cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         val hoverBackground = Laf.Colors.LIST_ITEM_BACKGROUND
 
         addMouseListener(object : MouseAdapter() {
@@ -23,17 +50,40 @@ internal class IconButton(icon: Icon) : JButton(icon) {
             }
 
             override fun mouseExited(e: MouseEvent?) {
-                background = Laf.Colors.TRANSPARENT
+                background = if (isSelected) {
+                    hoverBackground
+                } else {
+                    Laf.Colors.TRANSPARENT
+                }
             }
 
             override fun mousePressed(e: MouseEvent?) {
+                if (isSelected && selectedIcon != null) {
+                    icon = selectedIcon
+                }
                 background = Laf.Colors.TRANSPARENT
             }
 
             override fun mouseReleased(e: MouseEvent?) {
-                background = hoverBackground
+                background = if (isSelected) {
+                    hoverBackground
+                } else {
+                    Laf.Colors.TRANSPARENT
+                }
             }
         })
+    }
+
+    override fun setSelected(selected: Boolean) {
+        super.setSelected(selected)
+
+        if (selectedIcon != null) {
+            icon = if (isSelected) {
+                selectedIcon
+            } else {
+                defaultIcon
+            }
+        }
     }
 
     override fun paintComponent(g: Graphics) {

@@ -11,12 +11,7 @@ import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
 import org.digma.intellij.plugin.log.Log
 import org.digma.intellij.plugin.posthog.ActivityMonitor
-import org.digma.intellij.plugin.ui.common.createLoadingInsightsPanel
-import org.digma.intellij.plugin.ui.common.createNoDataYetPanel
-import org.digma.intellij.plugin.ui.common.createNoObservabilityPanel
-import org.digma.intellij.plugin.ui.common.createPendingInsightsPanel
-import org.digma.intellij.plugin.ui.common.noCodeObjectWarningPanel
-import org.digma.intellij.plugin.ui.common.wrapWithNoConnectionWrapper
+import org.digma.intellij.plugin.ui.common.*
 import org.digma.intellij.plugin.ui.list.ScrollablePanelList
 import org.digma.intellij.plugin.ui.list.insights.InsightsList
 import org.digma.intellij.plugin.ui.list.insights.PreviewList
@@ -150,7 +145,7 @@ fun insightsPanel(project: Project): DigmaTabPanel {
     result.layout = BorderLayout()
     result.add(cardsPanel, BorderLayout.CENTER)
     result.background = listBackground()
-    result.isOpaque = false
+    result.isOpaque = true
 
-    return wrapWithNoConnectionWrapper(project, result)
+    return result
 }

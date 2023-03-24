@@ -11,7 +11,7 @@ fun createMainSidePaneWindowPanel(project: Project): DigmaResettablePanel {
 
     val insightsModel = InsightsViewService.getInstance(project).model
     val navigationPanel = NavigationPanel(project, insightsModel, AnalyticsService.getInstance(project).environment)
-    val tabsPanel = TabsPanel(project)
+    val tabsPanel = NoConnectionWrapper(project, TabsPanel(project))
 
     val result = object : DigmaResettablePanel() {
 

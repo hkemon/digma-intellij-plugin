@@ -12,7 +12,6 @@ import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI.Borders.empty
 import org.digma.intellij.plugin.log.Log
 import org.digma.intellij.plugin.ui.common.noCodeObjectWarningPanel
-import org.digma.intellij.plugin.ui.common.wrapWithNoConnectionWrapper
 import org.digma.intellij.plugin.ui.list.ScrollablePanelList
 import org.digma.intellij.plugin.ui.list.errors.ErrorsPanelList
 import org.digma.intellij.plugin.ui.list.insights.PreviewList
@@ -33,7 +32,7 @@ private const val NO_INFO_CARD_NAME = "NO-INFO"
 private const val LIST_CARD_NAME = "LIST"
 private const val PREVIEW_LIST_CARD_NAME = "PREVIEW_LIST"
 
-private val logger: Logger = Logger.getInstance("org.digma.intellij.plugin.ui.insights.ErrorsTab")
+private val logger: Logger = Logger.getInstance("org.digma.intellij.plugin.ui.errors.ErrorsTab")
 
 
 fun errorsPanel(project: Project): DigmaTabPanel {
@@ -155,9 +154,10 @@ fun errorsPanel(project: Project): DigmaTabPanel {
     }
 
     result.layout = BorderLayout()
+    result.isOpaque = true
     result.add(cardsPanel, BorderLayout.CENTER)
     result.background = listBackground()
 
-    return wrapWithNoConnectionWrapper(project, result)
+    return result
 }
 

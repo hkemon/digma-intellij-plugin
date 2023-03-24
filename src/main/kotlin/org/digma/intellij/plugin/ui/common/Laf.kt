@@ -68,6 +68,7 @@ object Laf {
         class General{
             companion object {
                 @JvmStatic val HOME: Icon = SvgIcon.asIs("/icons/home.svg")
+                @JvmStatic val HOME_SELECTED: Icon = SvgIcon.asIs("/icons/home-selected.svg")
                 @JvmStatic val ARROW_UP: Icon = SvgIcon.asIs("/icons/arrow-up.svg")
                 @JvmStatic val ARROW_DOWN: Icon = SvgIcon.asIs("/icons/arrow-down.svg")
                 @JvmStatic val DIGMA_LOGO: Icon = SvgIcon.asIs("/icons/digma-logo.svg")

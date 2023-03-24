@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBusConnection
 import org.digma.intellij.plugin.refreshInsightsTask.RefreshInsightsTaskScheduled
 import org.digma.intellij.plugin.ui.common.Laf
+import java.awt.Cursor
 import java.awt.Graphics
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -23,6 +24,7 @@ internal class GeneralRefreshIconButton(project: Project, icon: Icon) : JButton(
         isBorderPainted = false
         isEnabled = true
         background = Laf.Colors.TRANSPARENT
+        cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         val hoverBackground = Laf.Colors.LIST_ITEM_BACKGROUND
         val isGeneralRefreshButtonEnabled = AtomicBoolean(true)
 

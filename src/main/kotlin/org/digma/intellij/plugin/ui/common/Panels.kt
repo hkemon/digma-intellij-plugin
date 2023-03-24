@@ -108,7 +108,3 @@ private fun getNoInfoMessage(model: PanelModel): String {
     }
     return msg
 }
-
-fun wrapWithNoConnectionWrapper(project: Project, panel: DigmaTabPanel): DigmaTabPanel {
-    return NoConnectionWrapper(project, panel)
-}

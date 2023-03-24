@@ -43,7 +43,7 @@ public class ErrorsActionsService implements ContentManagerListener {
 
     public void showErrorDetails(@NotNull String uid) {
         tabsHelper.showingErrorDetails();
-        errorsViewService.setVisible();
+//        errorsViewService.setVisible();
         errorsViewService.showErrorDetails(uid);
         tabsHelper.errorDetailsOn();
     }
@@ -58,7 +58,7 @@ public class ErrorsActionsService implements ContentManagerListener {
     @Override
     public void selectionChanged(@NotNull ContentManagerEvent event) {
         if (tabsHelper.isErrorDetailsOn() &&
-                (tabsHelper.isInsightsTab(event.getContent()) || tabsHelper.isSummaryTab(event.getContent()))) {
+                (tabsHelper.isInsightsTab(event.getContent()) || tabsHelper.isDashboardTab(event.getContent()))) {
             tabsHelper.errorDetailsOff();
             errorsViewService.closeErrorDetails();
             insightsViewService.updateUi();

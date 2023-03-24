@@ -66,6 +66,8 @@
 
         <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.TabsHelper"/>
 
+        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.HomeButtonHelper"/>
+
         <projectService serviceImplementation="org.digma.intellij.plugin.service.EditorService"/>
 
         <projectService serviceImplementation="org.digma.intellij.plugin.vcs.VcsService"/>
@@ -133,8 +135,11 @@
                 class="org.digma.intellij.plugin.emvironment.EnvironmentChangeHandler"
                 topic="org.digma.intellij.plugin.analytics.EnvironmentChanged"/>
         <listener
-                class="org.digma.intellij.plugin.tab.TabChangeHandler"
-                topic="org.digma.intellij.plugin.analytics.TabsChanged"/>
+                class="org.digma.intellij.plugin.tab.ErrorDetailsStateChangeHandler"
+                topic="org.digma.intellij.plugin.analytics.ErrorDetailsStateChanged"/>
+        <listener
+                class="org.digma.intellij.plugin.dashboard.DashboardButtonStateHandler"
+                topic="org.digma.intellij.plugin.analytics.DashboardButtonStateChanged"/>
         <listener
                 class="org.digma.intellij.plugin.debugger.DebuggerListener"
                 topic="com.intellij.xdebugger.XDebuggerManagerListener"/>

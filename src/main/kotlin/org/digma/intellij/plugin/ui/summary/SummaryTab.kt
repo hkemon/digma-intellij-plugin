@@ -2,7 +2,6 @@ package org.digma.intellij.plugin.ui.summary
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.JBUI
-import org.digma.intellij.plugin.ui.common.wrapWithNoConnectionWrapper
 import org.digma.intellij.plugin.ui.list.ScrollablePanelList
 import org.digma.intellij.plugin.ui.list.listBackground
 import org.digma.intellij.plugin.ui.list.summaries.SummaryPanelList
@@ -32,11 +31,11 @@ fun summaryPanel(project: Project): DigmaTabPanel {
         }
     }
 
-    result.isOpaque = false
+    result.isOpaque = true
     result.border = JBUI.Borders.empty()
     result.layout = BorderLayout()
     result.add(summaryList, BorderLayout.CENTER)
     result.background = listBackground()
 
-    return wrapWithNoConnectionWrapper(project, result)
+    return result
 }
