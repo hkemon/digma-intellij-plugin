@@ -80,7 +80,7 @@ fun insightsPanel(project: Project): DigmaTabPanel {
     val pendingInsightsPanel = createPendingInsightsPanel()
     val loadingInsightsPanel = createLoadingInsightsPanel()
     val noDataYetPanel = createNoDataYetPanel()
-    val noObservabilityPanel = createNoObservabilityPanel()
+    val noObservabilityPanel = createNoObservabilityPanel(project, insightsModel)
 
     val cardLayout = CardLayout()
     val cardsPanel = JPanel(cardLayout)
@@ -111,6 +111,7 @@ fun insightsPanel(project: Project): DigmaTabPanel {
         override fun reset() {
 
             noInfoWarningPanel.reset()
+            noObservabilityPanel.reset()
             previewTitle.reset()
 
             insightsList.getModel().setListData(insightsModel.listViewItems)

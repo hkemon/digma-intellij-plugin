@@ -3,12 +3,17 @@ package org.digma.intellij.plugin.ui.common
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.psi.PsiJavaFile
 import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.MutableProperty
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
+import org.digma.intellij.plugin.common.IDEUtilsService
+import org.digma.intellij.plugin.idea.psi.java.JavaLanguageService
+import org.digma.intellij.plugin.psi.LanguageService
+import org.digma.intellij.plugin.ui.model.MethodScope
 import org.digma.intellij.plugin.ui.model.NOT_SUPPORTED_OBJECT_MSG
 import org.digma.intellij.plugin.ui.model.PanelModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
@@ -83,7 +88,7 @@ fun createNoDataYetPanel(): DialogPanel {
     }.andTransparent().withBorder(JBUI.Borders.empty())
 }
 
-fun createNoObservabilityPanel(): DialogPanel {
+fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): DialogPanel {
     return panel {
         row {
             icon(Laf.Icons.Common.NoObservability)
@@ -97,8 +102,27 @@ fun createNoObservabilityPanel(): DialogPanel {
             label(asHtml(NO_OBSERVABILITY_DETAIL_DESCRIPTION))
                     .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+        row {
+            val methodId = (insightsModel.scope as MethodScope)?.getMethodInfo()?.id ?: return @row
+            val languageService = LanguageService.findLanguageServiceByMethodCodeObjectId(project, methodId)
+            //(languageService as JavaLanguageService).instrumentMethod(project, methodId);
+
+            if (languageService is JavaLanguageService) {
+                languageService.instrumentMethod(project, methodId)
+
+                button("Add Annotation"){
+
+                }
+            }
+
+            button("Add Annotation") {
+
+            }.visible(IDEUtilsService.getInstance(project).isJavaProject())
+        }
     }.andTransparent().withBorder(JBUI.Borders.empty())
 }
+
+
 
 private fun getNoInfoMessage(model: PanelModel): String {
     var msg = if (model is InsightsModel) "No insights" else "No errors"

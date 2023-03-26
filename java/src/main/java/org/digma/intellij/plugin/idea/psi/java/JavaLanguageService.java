@@ -4,6 +4,7 @@ import com.intellij.codeInsight.codeVision.CodeVisionEntry;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -137,6 +138,34 @@ public class JavaLanguageService implements LanguageService {
         return new MethodUnderCaret("", "", "", PsiUtils.psiFileToUri(psiFile), true);
     }
 
+    public void instrumentMethod(@NotNull Project project, String methodCodeObjectId){
+        var psiMethod = findPsiMethodByMethodCodeObjectId(methodCodeObjectId);
+        if (psiMethod == null) {
+            return;
+        }
+
+        var psiFile =  psiMethod.getContainingFile();
+        if (!(psiFile instanceof PsiJavaFile psiJavaFile)) {
+            return;
+        }
+
+        var withSpanClass = JavaPsiFacade.getInstance(project).findClass(
+                "io.opentelemetry.instrumentation.annotations.WithSpan",
+                GlobalSearchScope.allScope(project));
+
+        WriteCommandAction.runWriteCommandAction(project, () -> {
+            var psiFactory = PsiElementFactory.getInstance(project);
+
+            //PsiAnnotation annotation = psiFactory.createAnnotationFromText("@WithSpan", psiMethod);
+            psiMethod.getModifierList().addAnnotation("WithSpan");
+
+            var existing = psiJavaFile.getImportList().findSingleClassImportStatement(withSpanClass.getQualifiedName());
+            if (existing == null) {
+                var importStatement = psiFactory.createImportStatement(withSpanClass);
+                psiJavaFile.getImportList().add(importStatement);
+            }
+        });
+    }
 
     /**
      * Navigate to any method in the project even if the file is not opened
@@ -252,36 +281,44 @@ public class JavaLanguageService implements LanguageService {
 
         methodCodeObjectIds.forEach(methodId -> {
 
-            if (methodId.contains("$_$")) {
-                var className = methodId.substring(0, methodId.indexOf("$_$"));
-
-                //the code object id for inner classes separates inner classes name with $, but intellij index them with a dot
-                className = className.replace('$', '.');
-
-                //searching in project scope will find only project classes
-                Collection<PsiClass> psiClasses =
-                        JavaFullClassNameIndex.getInstance().get(className, project, GlobalSearchScope.projectScope(project));
-                if (!psiClasses.isEmpty()) {
-                    //hopefully there is only one class by that name in the project
-                    PsiClass psiClass = psiClasses.stream().findAny().get();
-                    PsiFile psiFile = PsiTreeUtil.getParentOfType(psiClass, PsiFile.class);
-                    for (PsiMethod method : psiClass.getMethods()) {
-                        String javaMethodCodeObjectId = createJavaMethodCodeObjectId(method);
-                        if (javaMethodCodeObjectId.equals(methodId) && psiFile != null) {
-                            String url = PsiUtils.psiFileToUri(psiFile);
-                            workspaceUrls.put(methodId, new Pair<>(url, method.getTextOffset()));
-
-                        }
-                    }
-                }
-            }else{
-                Log.log(LOGGER::debug, "method id in findWorkspaceUrisForMethodCodeObjectIds does not contain $_$ {}", methodId);
+            var psiMethod = findPsiMethodByMethodCodeObjectId(methodId);
+            if (psiMethod != null) {
+                String url = PsiUtils.psiFileToUri(psiMethod.getContainingFile());
+                workspaceUrls.put(methodId, new Pair<>(url, psiMethod.getTextOffset()));
             }
         });
 
         return workspaceUrls;
     }
 
+    private @Nullable PsiMethod findPsiMethodByMethodCodeObjectId(String methodId){
+        if (methodId.contains("$_$")) {
+            var className = methodId.substring(0, methodId.indexOf("$_$"));
+
+            //the code object id for inner classes separates inner classes name with $, but intellij index them with a dot
+            className = className.replace('$', '.');
+
+            //searching in project scope will find only project classes
+            Collection<PsiClass> psiClasses =
+                    JavaFullClassNameIndex.getInstance().get(className, project, GlobalSearchScope.projectScope(project));
+            if (!psiClasses.isEmpty()) {
+                //hopefully there is only one class by that name in the project
+                PsiClass psiClass = psiClasses.stream().findAny().get();
+                PsiFile psiFile = PsiTreeUtil.getParentOfType(psiClass, PsiFile.class);
+                for (PsiMethod method : psiClass.getMethods()) {
+                    String javaMethodCodeObjectId = createJavaMethodCodeObjectId(method);
+                    if (javaMethodCodeObjectId.equals(methodId) && psiFile != null) {
+//                        String url = PsiUtils.psiFileToUri(psiFile);
+//                        workspaceUrls.put(methodId, new Pair<>(url, method.getTextOffset()));
+                        return method;
+                    }
+                }
+            }
+        }else{
+            Log.log(LOGGER::debug, "method id in findWorkspaceUrisForMethodCodeObjectIds does not contain $_$ {}", methodId);
+        }
+        return null;
+    }
 
     @NotNull
     @Override
