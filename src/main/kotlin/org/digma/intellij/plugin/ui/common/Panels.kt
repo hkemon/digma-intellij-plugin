@@ -3,21 +3,19 @@ package org.digma.intellij.plugin.ui.common
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.psi.PsiJavaFile
-import com.intellij.ui.dsl.builder.BottomGap
-import com.intellij.ui.dsl.builder.MutableProperty
-import com.intellij.ui.dsl.builder.TopGap
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
-import org.digma.intellij.plugin.common.IDEUtilsService
 import org.digma.intellij.plugin.idea.psi.java.JavaLanguageService
+import org.digma.intellij.plugin.notifications.NotificationUtil
+import org.digma.intellij.plugin.posthog.ActivityMonitor
 import org.digma.intellij.plugin.psi.LanguageService
 import org.digma.intellij.plugin.ui.model.MethodScope
 import org.digma.intellij.plugin.ui.model.NOT_SUPPORTED_OBJECT_MSG
 import org.digma.intellij.plugin.ui.model.PanelModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
+import javax.swing.JButton
 import javax.swing.JLabel
 
 
@@ -89,6 +87,11 @@ fun createNoDataYetPanel(): DialogPanel {
 }
 
 fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): DialogPanel {
+
+    lateinit var addButton: Cell<JButton>
+    var methodId: String? = null
+    var languageService: JavaLanguageService? = null
+
     return panel {
         row {
             icon(Laf.Icons.Common.NoObservability)
@@ -103,21 +106,28 @@ fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): 
                     .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
         row {
-            val methodId = (insightsModel.scope as MethodScope)?.getMethodInfo()?.id ?: return @row
-            val languageService = LanguageService.findLanguageServiceByMethodCodeObjectId(project, methodId)
-            //(languageService as JavaLanguageService).instrumentMethod(project, methodId);
-
-            if (languageService is JavaLanguageService) {
-                languageService.instrumentMethod(project, methodId)
-
-                button("Add Annotation"){
-
+            addButton = button("Add Annotation"){
+                ActivityMonitor.getInstance(project).registerInsightButtonClicked("add-annotation")
+                val succeeded = languageService!!.instrumentMethod(project, methodId)
+                if(!succeeded){
+                    NotificationUtil.notifyError(project, "Failed to add annotation")
                 }
             }
+        }
+        onReset {
+            methodId = (insightsModel.scope as? MethodScope)?.getMethodInfo()?.id
+            if(methodId == null){
+                addButton.component.isVisible = false
+                return@onReset
+            }
 
-            button("Add Annotation") {
+            languageService = LanguageService.findLanguageServiceByMethodCodeObjectId(project, methodId) as? JavaLanguageService
+            if(languageService == null){
+                addButton.component.isVisible = false
+                return@onReset
+            }
 
-            }.visible(IDEUtilsService.getInstance(project).isJavaProject())
+            addButton.component.isVisible = true
         }
     }.andTransparent().withBorder(JBUI.Borders.empty())
 }

@@ -138,15 +138,17 @@ public class JavaLanguageService implements LanguageService {
         return new MethodUnderCaret("", "", "", PsiUtils.psiFileToUri(psiFile), true);
     }
 
-    public void instrumentMethod(@NotNull Project project, String methodCodeObjectId){
+    public boolean instrumentMethod(@NotNull Project project, String methodCodeObjectId){
         var psiMethod = findPsiMethodByMethodCodeObjectId(methodCodeObjectId);
         if (psiMethod == null) {
-            return;
+            Log.log(LOGGER::warn, "Failed to get PsiMethod from method id '{}'", methodCodeObjectId);
+            return false;
         }
 
         var psiFile =  psiMethod.getContainingFile();
         if (!(psiFile instanceof PsiJavaFile psiJavaFile)) {
-            return;
+            Log.log(LOGGER::warn, "PsiMethod's '{}' file is not java file", methodCodeObjectId);
+            return false;
         }
 
         var withSpanClass = JavaPsiFacade.getInstance(project).findClass(
@@ -165,6 +167,7 @@ public class JavaLanguageService implements LanguageService {
                 psiJavaFile.getImportList().add(importStatement);
             }
         });
+        return true;
     }
 
     /**
