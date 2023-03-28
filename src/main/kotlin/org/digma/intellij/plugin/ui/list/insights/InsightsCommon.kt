@@ -401,18 +401,6 @@ private const val NoObservabilityDescription = "Add an annotation to observe thi
 
 fun noObservabilityInsightPanel(project: Project, insight: NoObservability): JPanel {
 
-    val thePanel = object : DigmaResettablePanel() {
-        override fun reset() {
-        }
-    }
-    thePanel.layout = BoxLayout(thePanel, BoxLayout.Y_AXIS)
-
-    val titlePanel = JPanel(BorderLayout())
-    titlePanel.isOpaque = false
-    titlePanel.add(getMessageLabel("No Observability", ""), BorderLayout.WEST)
-    titlePanel.add(JLabel(asHtml(NoObservabilityDescription)), BorderLayout.SOUTH)
-    thePanel.add(titlePanel)
-
     val methodId = insight.methodId
     var addAnnotationButton : JButton? = null;
     if(methodId != null){
@@ -426,12 +414,8 @@ fun noObservabilityInsightPanel(project: Project, insight: NoObservability): JPa
                     NotificationUtil.notifyError(project, "Failed to add annotation")
                 }
             }
-            //addAnnotationButton.horizontalAlignment = SwingConstants.RIGHT
-            thePanel.add(addAnnotationButton)
         }
     }
-
-//    return insightItemPanel(thePanel)
 
     return createInsightPanel(
         project = project,
