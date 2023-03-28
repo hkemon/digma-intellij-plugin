@@ -84,7 +84,7 @@ public class SettingsComponent {
         var myJaegerLinkModeLabel = new JBLabel("Jaeger Link Mode: ");
         myJaegerLinkModeLabel.setToolTipText("Internal will open the link as an embedded URL within the IDE. External will open the link externally to your default browser");
 
-        var myRuntimeObservabilityBackendUrlLabel = new JBLabel("Runtime observability backend URL:");
+        var myRuntimeObservabilityBackendUrlLabel = new JBLabel("ErrorRuntime observability backend URL:");
         myRuntimeObservabilityBackendUrlLabel.setToolTipText("Where should observability data be sent from the IDE? This would be the Digma collector URL typically listening to port 5050");
         JBLabel feedbackForRuntimeObservabilityBackendUrl = buildFeedbackNotValidUrl();
 
