@@ -89,6 +89,7 @@ fun createNoDataYetPanel(): DialogPanel {
 fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): DialogPanel {
 
     lateinit var addButton: Cell<JButton>
+    var autoFixRow: Row
     var methodId: String? = null
     var languageService: JavaLanguageService? = null
 
@@ -105,6 +106,11 @@ fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): 
             label(asHtml(NO_OBSERVABILITY_DETAIL_DESCRIPTION))
                     .horizontalAlign(HorizontalAlign.CENTER)
         }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+        autoFixRow = row {
+            button("Auto fix") {
+                languageService!!.addReferenceToOtelLib(project, methodId);
+            }
+        }.visible(false)
         row {
             addButton = button("Add Annotation"){
                 ActivityMonitor.getInstance(project).registerInsightButtonClicked("add-annotation")
@@ -112,7 +118,7 @@ fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): 
                 if(!succeeded){
                     NotificationUtil.notifyError(project, "Failed to add annotation")
                 }
-            }
+            }.horizontalAlign(HorizontalAlign.CENTER)
         }
         onReset {
             methodId = (insightsModel.scope as? MethodScope)?.getMethodInfo()?.id
@@ -125,6 +131,17 @@ fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): 
             if(languageService == null){
                 addButton.component.isVisible = false
                 return@onReset
+            }
+
+            val hasOtelRef = languageService!!.hasReferenceToOtelLib(project, methodId);
+            if(hasOtelRef == false){
+                addButton.component.isEnabled = false
+                autoFixRow.visible(true)
+            }
+            else{
+
+                addButton.component.isEnabled = true
+                autoFixRow.visible(false)
             }
 
             addButton.component.isVisible = true
