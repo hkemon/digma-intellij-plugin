@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
@@ -17,17 +16,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.ui.configuration.classpath.ProjectStructureChooseLibrariesDialog;
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
 import kotlin.Pair;
 import org.digma.intellij.plugin.common.EDT;
 import org.digma.intellij.plugin.log.Log;
@@ -36,8 +33,6 @@ import org.digma.intellij.plugin.model.discovery.MethodUnderCaret;
 import org.digma.intellij.plugin.psi.LanguageService;
 import org.digma.intellij.plugin.psi.PsiUtils;
 import org.digma.intellij.plugin.ui.CaretContextService;
-import org.gradle.internal.impldep.org.junit.platform.engine.support.hierarchical.ThrowableCollector;
-import org.gradle.tooling.model.GradleProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -191,24 +186,61 @@ public class JavaLanguageService implements LanguageService {
         if(module == null)
             return;
 
+        var moduleManager = ModuleRootManager.getInstance(module);
+        var externalSourceId = Optional.ofNullable(moduleManager)
+                .map(ModuleRootManager::getExternalSource)
+                .map(ProjectModelExternalSource::getId)
+                .orElseGet(null);
+        if(externalSourceId == null)
+            return;
+
         ProjectSystemId systemId = null;
-        if(ModuleRootManager.getInstance(module).getExternalSource().getId().equals("GRADLE")){
+        String modulePath = null;
+
+        if(externalSourceId.equals("GRADLE")){
             systemId = GradleConstants.SYSTEM_ID;
+
+            var gradleFile = findClosestFileAbove(moduleManager.getContentRoots()[0], "build.gradle");
+            if(gradleFile != null) {
+                modulePath = gradleFile.getParent().getPath();
+
+                var psiGradle = PsiManager.getInstance(project).findFile(gradleFile);
+                psiGradle.getChildren();
+            }
         }
-        if(ModuleRootManager.getInstance(module).getExternalSource().getId().equals("MAVEN")) {
+
+        if(externalSourceId.equals("MAVEN")) {
             systemId = new ProjectSystemId("MAVEN");
+
+            var gradleFile = findClosestFileAbove(moduleManager.getContentRoots()[0], "pom.xml");
+            if(gradleFile != null)
+                modulePath = gradleFile.getParent().getPath();
         }
-        if(systemId != null){
-//            ExternalSystemUtil.refreshProject(
-//                    project,
-//                    GradleConstants.SYSTEM_ID,
-//                    ModuleUtilCore.file,
-//                    false,
-//                    ProgressExecutionMode.IN_BACKGROUND_ASYNC);
-            ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, systemId)
-                    .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
+
+        if(systemId != null && modulePath != null){
+            ExternalSystemUtil.refreshProject(
+                    project,
+                    GradleConstants.SYSTEM_ID,
+                    modulePath,
+                    false,
+                    ProgressExecutionMode.IN_BACKGROUND_ASYNC);
+//            ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, systemId)
+//                    .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
         }
     }
+
+    @Nullable
+    private VirtualFile findClosestFileAbove(VirtualFile folder, String fileName){
+        VirtualFile result = null;
+        while (result == null && folder != null){
+            result = Arrays.stream(folder.getChildren())
+                    .filter(f -> f.getName().equals(fileName) && !f.isDirectory())
+                    .findAny().orElse(null);
+            folder = folder.getParent();
+        }
+        return result;
+    }
+
 
     @Nullable
     private Module getModuleOfMethodId(String methodCodeObjectId) {
