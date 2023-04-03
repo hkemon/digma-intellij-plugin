@@ -12,9 +12,9 @@ import org.digma.intellij.plugin.ui.model.MethodScope
 import org.digma.intellij.plugin.ui.model.NOT_SUPPORTED_OBJECT_MSG
 import org.digma.intellij.plugin.ui.model.PanelModel
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
+import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
 import org.digma.intellij.plugin.ui.panels.DigmaTabPanel
-import javax.swing.JButton
-import javax.swing.JLabel
+import javax.swing.*
 
 
 const val NO_DATA_YET_DETAIL_DESCRIPTION = "Trigger actions that call this code object to learn more about its runtime behavior"
@@ -86,65 +86,124 @@ fun createNoDataYetPanel(): DialogPanel {
     }.andTransparent().withBorder(JBUI.Borders.empty())
 }
 
-fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): DialogPanel {
+fun createNoObservabilityPanel(project: Project, insightsModel: InsightsModel): DigmaResettablePanel {
 
     val model = MethodInstrumentationPresenter(project)
 
-    lateinit var addButton: Cell<JButton>
-    lateinit var autoFixRow: Row
     lateinit var dependencyName: Cell<JBTextArea>
 
-    return panel {
+    val iconLabel = JLabel(Laf.Icons.Common.NoObservability, SwingConstants.RIGHT)
+    iconLabel.horizontalAlignment = SwingConstants.RIGHT
+    iconLabel.verticalAlignment = SwingConstants.TOP
+    iconLabel.isOpaque = false
+    //iconLabel.border = JBUI.Borders.empty(2, 2, 2, 4)
+    val iconPanel = CircularPanel()
+    iconPanel.background = Laf.Colors.LIST_ITEM_BACKGROUND
+    iconPanel.add(iconLabel)
+
+    val titleLabel = JLabel("No Observability")
+    val descriptionLabel = JLabel(asHtml(NO_OBSERVABILITY_DETAIL_DESCRIPTION))
+    val missingDependencyPanel = panel {
         row {
-            icon(Laf.Icons.Common.NoObservability)
-                    .horizontalAlign(HorizontalAlign.CENTER)
-        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.SMALL)
-        row {
-            label("No Observability")
-                    .horizontalAlign(HorizontalAlign.CENTER)
-        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
-        row {
-            label(asHtml(NO_OBSERVABILITY_DETAIL_DESCRIPTION))
-                    .horizontalAlign(HorizontalAlign.CENTER)
-        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
-        autoFixRow = row {
-             panel {
-                row {
-                    label(asHtml(NO_OBSERVABILITY_MISSING_DEPENDENCY_DESCRIPTION))
-                }
-                row {
-                    dependencyName = textArea()
-                    dependencyName.component.isEditable = false
-                    dependencyName.component.background = Laf.Colors.EDITOR_BACKGROUND
-                    dependencyName.component.lineWrap = true
-                    dependencyName.horizontalAlign(HorizontalAlign.FILL)
-                }
-            }
-        }.visible(false)
-        row {
-            addButton = button("Add Annotation"){
-                val succeeded = model.instrumentMethod()
-                if(succeeded){
-                    addButton.enabled(false)
-                }
-                else{
-                    NotificationUtil.notifyError(project, "Failed to add annotation")
-                }
-            }.horizontalAlign(HorizontalAlign.CENTER)
+            label(asHtml(NO_OBSERVABILITY_MISSING_DEPENDENCY_DESCRIPTION))
         }
-        onReset {
+        row {
+            dependencyName = textArea()
+            dependencyName.component.isEditable = false
+            dependencyName.component.background = Laf.Colors.EDITOR_BACKGROUND
+            dependencyName.component.lineWrap = true
+            dependencyName.horizontalAlign(HorizontalAlign.FILL)
+        }
+    }
+    val addButton = JButton("Add Annotation")
+    addButton.addActionListener {
+        val succeeded = model.instrumentMethod()
+        if(succeeded){
+            addButton.isEnabled = false
+        }
+        else{
+            NotificationUtil.notifyError(project, "Failed to add annotation")
+        }
+    }
+
+    val panel = object : DigmaResettablePanel() {
+        override fun reset() {
             model.update((insightsModel.scope as? MethodScope)?.getMethodInfo()?.id)
             if(model.canInstrumentMethod){
-                addButton.component.isEnabled = true
-                autoFixRow.visible(false)
+                addButton.isEnabled = true
+                missingDependencyPanel.isVisible = false
             }
             else {
-                addButton.component.isEnabled = false
-                autoFixRow.visible(model.cannotBecauseMissingDependency)
+                addButton.isEnabled = false
+                missingDependencyPanel.isVisible = model.cannotBecauseMissingDependency
                 dependencyName.text(model.missingDependency ?: "")
             }
         }
-    }.andTransparent().withBorder(JBUI.Borders.empty())
+    }
+    panel.isOpaque = false
+    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+    panel.border = JBUI.Borders.empty()
+
+    panel.add(iconPanel)
+    panel.add(titleLabel)
+    panel.add(descriptionLabel)
+    panel.add(missingDependencyPanel)
+    panel.add(addButton)
+
+
+    return panel
+//
+//    return panel {
+//        row {
+//            icon(Laf.Icons.Common.NoObservability)
+//                    .horizontalAlign(HorizontalAlign.CENTER)
+//        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.SMALL)
+//        row {
+//            label("No Observability")
+//                    .horizontalAlign(HorizontalAlign.CENTER)
+//        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+//        row {
+//            label(asHtml(NO_OBSERVABILITY_DETAIL_DESCRIPTION))
+//                    .horizontalAlign(HorizontalAlign.CENTER)
+//        }.bottomGap(BottomGap.MEDIUM).topGap(TopGap.MEDIUM)
+//        missingDependencyPanel = row {
+//             panel {
+//                row {
+//                    label(asHtml(NO_OBSERVABILITY_MISSING_DEPENDENCY_DESCRIPTION))
+//                }
+//                row {
+//                    dependencyName = textArea()
+//                    dependencyName.component.isEditable = false
+//                    dependencyName.component.background = Laf.Colors.EDITOR_BACKGROUND
+//                    dependencyName.component.lineWrap = true
+//                    dependencyName.horizontalAlign(HorizontalAlign.FILL)
+//                }
+//            }
+//        }.visible(false)
+//        row {
+//            addButton = button("Add Annotation"){
+//                val succeeded = model.instrumentMethod()
+//                if(succeeded){
+//                    addButton.enabled(false)
+//                }
+//                else{
+//                    NotificationUtil.notifyError(project, "Failed to add annotation")
+//                }
+//            }.horizontalAlign(HorizontalAlign.CENTER)
+//        }
+//        onReset {
+//            model.update((insightsModel.scope as? MethodScope)?.getMethodInfo()?.id)
+//            if(model.canInstrumentMethod){
+//                addButton.component.isEnabled = true
+//                missingDependencyPanel.visible(false)
+//            }
+//            else {
+//                addButton.component.isEnabled = false
+//                missingDependencyPanel.visible(model.cannotBecauseMissingDependency)
+//                dependencyName.text(model.missingDependency ?: "")
+//            }
+//        }
+//    }.andTransparent().withBorder(JBUI.Borders.empty())
 }
 
 
