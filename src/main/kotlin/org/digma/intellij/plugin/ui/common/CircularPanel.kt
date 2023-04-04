@@ -8,6 +8,7 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import javax.swing.JComponent
 import javax.swing.JPanel
+import kotlin.math.min
 
 class CircularPanel : JPanel() {
 
@@ -31,7 +32,7 @@ class CircularPanel : JPanel() {
 
         graphics.color = super.getBackground()
         val border = super.getBorder()?.getBorderInsets(this)?: JBUI.emptyInsets()
-        val radius = Math.max(width-border.left-border.right, height-border.top-border.bottom)
+        val radius = min(width-border.left-border.right, height-border.top-border.bottom)
         graphics.fillOval(border.left, border.top, radius, radius)
     }
 
