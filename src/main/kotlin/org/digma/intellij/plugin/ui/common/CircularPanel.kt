@@ -2,10 +2,7 @@ package org.digma.intellij.plugin.ui.common
 
 import com.intellij.util.ui.JBUI
 import org.digma.intellij.plugin.ui.list.RoundedPanel
-import java.awt.BorderLayout
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.math.min
@@ -16,13 +13,8 @@ class CircularPanel : JPanel() {
         isOpaque = false
     }
 
-    companion object{
-        fun wrap(c: JComponent, radius: Int): RoundedPanel {
-            val wrapper = RoundedPanel(radius)
-            wrapper.layout = BorderLayout()
-            wrapper.add(c, BorderLayout.CENTER)
-            return wrapper
-        }
+    override fun getPreferredSize(): Dimension {
+        return Dimension(80,80)
     }
 
     override fun paintComponent(g: Graphics) {
@@ -35,5 +27,4 @@ class CircularPanel : JPanel() {
         val radius = min(width-border.left-border.right, height-border.top-border.bottom)
         graphics.fillOval(border.left, border.top, radius, radius)
     }
-
 }

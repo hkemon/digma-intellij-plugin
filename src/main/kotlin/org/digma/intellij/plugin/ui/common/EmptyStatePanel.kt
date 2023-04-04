@@ -12,13 +12,11 @@ import org.digma.intellij.plugin.notifications.NotificationUtil
 import org.digma.intellij.plugin.ui.model.MethodScope
 import org.digma.intellij.plugin.ui.model.insights.InsightsModel
 import org.digma.intellij.plugin.ui.panels.DigmaResettablePanel
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Font
-import javax.swing.BoxLayout
-import javax.swing.JButton
-import javax.swing.JLabel
-import javax.swing.SwingConstants
+import javax.swing.*
 
 class EmptyStatePanel(project: Project, private val insightsModel: InsightsModel) : DigmaResettablePanel() {
 
@@ -32,13 +30,19 @@ class EmptyStatePanel(project: Project, private val insightsModel: InsightsModel
 
         val iconLabel = JLabel(Laf.Icons.Common.NoObservability)
         iconLabel.isOpaque = false
+        iconLabel.horizontalAlignment = SwingConstants.CENTER
+        iconLabel.verticalAlignment = SwingConstants.CENTER
 
         val iconPanel = CircularPanel()
+        iconPanel.layout = BorderLayout()
         iconPanel.background = Laf.Colors.EDITOR_BACKGROUND
         iconPanel.alignmentX = Component.CENTER_ALIGNMENT
-        iconPanel.border = JBUI.Borders.emptyTop(100)
-        //iconPanel.maximumSize = Dimension(iconLabel.size.width+20, iconLabel.size.height+20)
+        iconPanel.alignmentY = Component.CENTER_ALIGNMENT
         iconPanel.add(iconLabel)
+
+        val iconPanel2 = JPanel()
+        iconPanel2.border = JBUI.Borders.emptyTop(100)
+        iconPanel2.add(iconPanel)
 
         val titleLabel = JLabel("No Observability")
         titleLabel.alignmentX = Component.CENTER_ALIGNMENT
@@ -81,7 +85,7 @@ class EmptyStatePanel(project: Project, private val insightsModel: InsightsModel
         this.layout = BoxLayout(this, BoxLayout.Y_AXIS)
         this.border = JBUI.Borders.empty()
 
-        this.add(iconPanel)
+        this.add(iconPanel2)
         this.add(titleLabel)
         this.add(descriptionLabel)
         this.add(missingDependencyPanel)
