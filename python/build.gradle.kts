@@ -24,7 +24,7 @@ intellij {
 
     version.set("IC-" + properties("platformVersion", project))
     //the python plugin version must be compatible with platformVersion
-    plugins.set(listOf("PythonCore:223.7571.182"))
+    plugins.set(listOf("PythonCore:" + properties("pythonPluginVersion",project)))
 
     //to depend on pycharm community:
 //    version.set("PC-" + properties("platformVersion", project))

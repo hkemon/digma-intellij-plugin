@@ -9,19 +9,19 @@ plugins {
     id("com.glovoapp.semantic-versioning")
 }
 
-semanticVersion {
-    //if the propertiesFile is not changed the plugin will look for a file in each module.
-    propertiesFile.set(project.rootProject.file("version.properties"))
-}
+//semanticVersion {
+//    //if the propertiesFile is not changed the plugin will look for a file in each module.
+//    propertiesFile.set(project.rootProject.file("version.properties"))
+//}
 
-tasks.incrementSemanticVersion {
-    //disable the task for all projects.
-    //because digma-base is applied to all projects then calling incrementSemanticVersion will be invoked
-    //for each project and we don't want that.
-    //we could apply the plugin only to the main project but then we can't use its tasks in script plugins.
-    //the task is enabled only in the main project.
-    enabled = false
-}
+//tasks.incrementSemanticVersion {
+//    //disable the task for all projects.
+//    //because digma-base is applied to all projects then calling incrementSemanticVersion will be invoked
+//    //for each project and we don't want that.
+//    //we could apply the plugin only to the main project but then we can't use its tasks in script plugins.
+//    //the task is enabled only in the main project.
+//    enabled = false
+//}
 
 java {
     toolchain {
@@ -31,6 +31,7 @@ java {
 
 group = properties("pluginGroup", project)
 version = project.semanticVersion.version.get()
+//version = "1.0"//project.semanticVersion.version.get()
 
 repositories {
     mavenCentral()
@@ -81,14 +82,15 @@ testing {
             useJUnitJupiter("5.8.2")
 
             dependencies {
-                implementation(project)
+                //implementation(project)
 
                 //this is a workaround to an issue with junit launcher in intellij platform 2022.2 plus gradle 7.5.1.
                 //it is discussed in a slack thread and will probably be fixed in the next intellij platform patch.
                 //todo: when upgrading the platform version check if its fixed just by removing it and building the project with no errors.
                 //https://jetbrains-platform.slack.com/archives/CPL5291JP/p1660085792256189
-                runtimeOnly("org.junit.platform:junit-platform-launcher")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine")
+                //todo: try
+//                runtimeOnly("org.junit.platform:junit-platform-launcher")
+//                runtimeOnly("org.junit.jupiter:junit-jupiter-engine")
             }
         }
     }

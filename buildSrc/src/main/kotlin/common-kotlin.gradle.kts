@@ -1,6 +1,6 @@
 import common.properties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 /*
 apply this plugin to projects that need the kotlin plugin.
@@ -37,7 +37,7 @@ dependencies {
 tasks {
     properties("javaVersion", project).let {
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = it
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(it))
         }
     }
 }
