@@ -9,6 +9,8 @@ plugins {
 dependencies{
     compileOnly(project(":ide-common"))
     compileOnly(project(":model"))
+
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.22")
 }
 
 intellij {

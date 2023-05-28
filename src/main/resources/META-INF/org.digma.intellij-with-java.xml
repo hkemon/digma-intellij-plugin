@@ -11,6 +11,7 @@
         <projectService serviceImplementation="org.digma.intellij.plugin.idea.psi.java.JavaSpanNavigationProvider"/>
         <postStartupActivity implementation="org.digma.intellij.plugin.idea.psi.java.JavaSpanNavigationStartupActivity"/>
         <projectService serviceImplementation="org.digma.intellij.plugin.idea.psi.java.JavaCodeLensService"/>
+        <projectService serviceImplementation="org.digma.intellij.plugin.idea.build.GradleProjModifier"/>
 
         <runConfigurationExtension implementation="org.digma.intellij.plugin.idea.runcfg.AutoOtelAgentRunConfigurationExtension"/>
         <applicationService serviceImplementation="org.digma.intellij.plugin.idea.runcfg.OTELJarProvider"/>
