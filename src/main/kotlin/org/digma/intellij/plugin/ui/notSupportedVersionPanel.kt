@@ -57,7 +57,8 @@ fun getNoConnectionMessageHtml(): String {
 
     val title = "Non supported IDE version"
     val paragraph = "This plugin requires a newer version of IntelliJ.<br>" +
-            "Please update to the latest version of IntelliJ."
+            "Please update to the latest version of IntelliJ<br>" +
+            "and install the latest plugin version."
 
     return "<html>" +
             "<head>" +
