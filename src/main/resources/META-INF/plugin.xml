@@ -25,85 +25,85 @@
                     anchor="left"
                     factoryClass="org.digma.intellij.plugin.toolwindow.DigmaToolWindowFactory"/>
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.ui.ToolWindowShower"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.ui.ToolWindowShower"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.service.EditorInteractionService"
-                        serviceInterface="org.digma.intellij.plugin.ui.CaretContextService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.service.EditorInteractionService"-->
+<!--                        serviceInterface="org.digma.intellij.plugin.ui.CaretContextService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.analytics.AnalyticsService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.analytics.AnalyticsService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.document.DocumentInfoService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.document.DocumentInfoService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.document.CodeLensProvider"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.document.CodeLensProvider"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.InsightsViewService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.InsightsViewService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.refreshInsightsTask.RefreshService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.refreshInsightsTask.RefreshService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.ErrorsViewService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.ErrorsViewService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.SummaryViewService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.SummaryViewService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.insights.InsightsProvider"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.insights.InsightsProvider"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.errors.ErrorsProvider"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.errors.ErrorsProvider"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.summary.SummariesProvider"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.summary.SummariesProvider"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.service.InsightsActionsService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.service.InsightsActionsService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.service.ErrorsActionsService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.service.ErrorsActionsService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.ToolWindowTabsHelper"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.ui.service.ToolWindowTabsHelper"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.service.EditorService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.service.EditorService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.vcs.VcsService"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.vcs.VcsService"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.common.DumbAwareNotifier"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.common.DumbAwareNotifier"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.analytics.BackendConnectionMonitor"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.analytics.BackendConnectionMonitor"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.psi.LanguageServiceLocator"/>
-
-
-        <notificationGroup id="Digma Notification Group"
-                           displayType="NONE"
-                           toolWindowId="Digma"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.psi.LanguageServiceLocator"/>-->
 
 
-        <projectConfigurable
-                parentId="tools"
-                instance="org.digma.intellij.plugin.settings.ProjectSettings"
-                id="org.digma.intellij.plugin.settings.ProjectSettings"
-                displayName="Digma Plugin"
-                nonDefaultProject="true"/>
+<!--        <notificationGroup id="Digma Notification Group"-->
+<!--                           displayType="NONE"-->
+<!--                           toolWindowId="Digma"/>-->
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.settings.SettingsState"/>
 
-        <projectService serviceImplementation="org.digma.intellij.plugin.persistence.PersistenceService"/>
+<!--        <projectConfigurable-->
+<!--                parentId="tools"-->
+<!--                instance="org.digma.intellij.plugin.settings.ProjectSettings"-->
+<!--                id="org.digma.intellij.plugin.settings.ProjectSettings"-->
+<!--                displayName="Digma Plugin"-->
+<!--                nonDefaultProject="true"/>-->
 
-        <editorNotificationProvider implementation="org.digma.intellij.plugin.notifications.DigmaEditorNotificationProvider"
-                                    id="org.digma.intellij.plugin.notifications.DigmaEditorNotificationProvider"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.settings.SettingsState"/>-->
 
-        <postStartupActivity implementation="org.digma.intellij.plugin.common.DumbAwareStartupActivity"/>
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.persistence.PersistenceService"/>-->
+
+<!--        <editorNotificationProvider implementation="org.digma.intellij.plugin.notifications.DigmaEditorNotificationProvider"-->
+<!--                                    id="org.digma.intellij.plugin.notifications.DigmaEditorNotificationProvider"/>-->
+
+<!--        <postStartupActivity implementation="org.digma.intellij.plugin.common.DumbAwareStartupActivity"/>-->
 
     </extensions>
 
 
     <projectListeners>
-        <listener
-                class="org.digma.intellij.plugin.project.ProjectOpenedListener"
-                topic="com.intellij.openapi.project.ProjectManagerListener"/>
-        <listener
-                class="org.digma.intellij.plugin.emvironment.EnvironmentChangeHandler"
-                topic="org.digma.intellij.plugin.analytics.EnvironmentChanged"/>
-        <listener
-                class="org.digma.intellij.plugin.debugger.DebuggerListener"
-                topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
-        <listener
-                class="org.digma.intellij.plugin.editor.GeneralFileEditorListener"
-                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+<!--        <listener-->
+<!--                class="org.digma.intellij.plugin.project.ProjectOpenedListener"-->
+<!--                topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+<!--        <listener-->
+<!--                class="org.digma.intellij.plugin.emvironment.EnvironmentChangeHandler"-->
+<!--                topic="org.digma.intellij.plugin.analytics.EnvironmentChanged"/>-->
+<!--        <listener-->
+<!--                class="org.digma.intellij.plugin.debugger.DebuggerListener"-->
+<!--                topic="com.intellij.xdebugger.XDebuggerManagerListener"/>-->
+<!--        <listener-->
+<!--                class="org.digma.intellij.plugin.editor.GeneralFileEditorListener"-->
+<!--                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>-->
     </projectListeners>
 
 

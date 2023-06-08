@@ -48,6 +48,7 @@ object Laf  {
 
     class Colors{
         companion object {
+
             @JvmStatic val DEFAULT_LABEL_FOREGROUND: Color = JBColor.foreground()
             @JvmStatic val PLUGIN_BACKGROUND: JBColor = JBColor.namedColor("Plugins.background", JBColor.PanelBackground)
             @JvmStatic val LIST_ITEM_BACKGROUND: JBColor = JBColor(Color(0, 0, 50, 15), Color(200, 200, 255, 20))
@@ -64,6 +65,8 @@ object Laf  {
     class Icons{
         class ErrorDetails{
             companion object {
+
+                @JvmStatic val LOGO: Icon = SvgIcon.withColor("/icons/digma.png", Colors.DEFAULT_LABEL_FOREGROUND)
                 @JvmStatic val BACK: Icon = SvgIcon.withColor("/icons/arrow-left.svg", Colors.DEFAULT_LABEL_FOREGROUND)
                 @JvmStatic val FORWARD: Icon = SvgIcon.withColor("/icons/arrow-right.svg", Colors.DEFAULT_LABEL_FOREGROUND)
                 @JvmStatic val EVENT_RED: Icon = SvgIcon.withColor("/icons/event.svg", Colors.ERROR_RED)
@@ -72,6 +75,7 @@ object Laf  {
         }
         class Environment {
             companion object {
+                @JvmStatic val SLACK: Icon = SvgIcon.asIs("/icons/slack.svg")
                 @JvmStatic val ENVIRONMENT_HAS_USAGE = loadAndScaleIconByWidth("/icons/used.png", 8)
                 @JvmStatic
                 val ENVIRONMENT_HAS_NO_USAGE = loadAndScaleIconByWidth("/icons/unused.png", 8)

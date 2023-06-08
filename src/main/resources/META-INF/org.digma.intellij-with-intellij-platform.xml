@@ -4,16 +4,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <fileBasedIndex implementation="org.digma.intellij.plugin.index.DocumentInfoIndex"/>
-        <projectService serviceImplementation="org.digma.intellij.plugin.index.DocumentInfoIndexBuilder"/>
+<!--        <fileBasedIndex implementation="org.digma.intellij.plugin.index.DocumentInfoIndex"/>-->
+<!--        <projectService serviceImplementation="org.digma.intellij.plugin.index.DocumentInfoIndexBuilder"/>-->
 
     </extensions>
 
 
     <projectListeners>
-        <listener
-                class="org.digma.intellij.plugin.editor.EditorEventsHandler"
-                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+<!--        <listener-->
+<!--                class="org.digma.intellij.plugin.editor.EditorEventsHandler"-->
+<!--                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>-->
     </projectListeners>
 
 

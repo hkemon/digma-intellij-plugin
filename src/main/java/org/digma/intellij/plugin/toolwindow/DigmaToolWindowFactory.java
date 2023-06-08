@@ -24,6 +24,10 @@ import org.digma.intellij.plugin.ui.service.ToolWindowTabsHelper;
 import org.digma.intellij.plugin.ui.summary.SummaryTabKt;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
+import static org.digma.intellij.plugin.ui.NotSupportedVersionPanelKt.createNotSupportedPanel;
+
 
 /**
  * The main Digma tool window
@@ -46,56 +50,63 @@ public class DigmaToolWindowFactory implements ToolWindowFactory {
 
         var contentFactory = ContentFactory.getInstance();
 
-        var toolWindowTabsHelper = project.getService(ToolWindowTabsHelper.class);
-        toolWindowTabsHelper.setToolWindow(toolWindow);
-
-        //initialize AnalyticsService early so the UI already can detect the connection status when created
-        project.getService(AnalyticsService.class);
+        var notSupportedPanel = createNotSupportedPanel(project);
+        var notSupportedContent = contentFactory.createContent(notSupportedPanel, null, false);
+        toolWindow.getContentManager().addContent(notSupportedContent);
 
 
-        Content contentToSelect = createInsightsTab(project, toolWindow, contentFactory, toolWindowTabsHelper);
-        createErrorsTab(project, toolWindow, contentFactory, toolWindowTabsHelper);
-        createSummaryTab(project, toolWindow, contentFactory);
+//        var toolWindowTabsHelper = project.getService(ToolWindowTabsHelper.class);
+//        toolWindowTabsHelper.setToolWindow(toolWindow);
+//
+//        //initialize AnalyticsService early so the UI already can detect the connection status when created
+//        project.getService(AnalyticsService.class);
+//
+//
+//        Content contentToSelect = createInsightsTab(project, toolWindow, contentFactory, toolWindowTabsHelper);
+//        createErrorsTab(project, toolWindow, contentFactory, toolWindowTabsHelper);
+//        createSummaryTab(project, toolWindow, contentFactory);
+//
+//
+//        ErrorsActionsService errorsActionsService = project.getService(ErrorsActionsService.class);
+//        toolWindow.getContentManager().addContentManagerListener(errorsActionsService);
+//
+//
+//        project.getService(ToolWindowShower.class).setToolWindow(toolWindow);
+//
+//        toolWindow.getContentManager().setSelectedContent(contentToSelect, true);
 
 
-        ErrorsActionsService errorsActionsService = project.getService(ErrorsActionsService.class);
-        toolWindow.getContentManager().addContentManagerListener(errorsActionsService);
-
-
-        project.getService(ToolWindowShower.class).setToolWindow(toolWindow);
-
-        toolWindow.getContentManager().setSelectedContent(contentToSelect, true);
-
-
-        new Task.Backgroundable(project, "Digma: update views") {
-            //sometimes the views models are updated before the tool window is initialized.
-            //it happens when files are re-opened early before the tool window, and CaretContextService.contextChanged
-            //is invoked and updates the models.
-            //SummaryViewService is also initialized before the tool window is opened, it will get the event when
-            // the environment is loaded and will update its model but will not update the ui because the panel is
-            // not initialized yet.
-            //only at this stage the panels are constructed already. just calling updateUi() for all view services
-            // will actually update the UI.
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-                project.getService(InsightsViewService.class).updateUi();
-                project.getService(ErrorsViewService.class).updateUi();
-                project.getService(SummaryViewService.class).updateUi();
-            }
-        }.queue();
+//        new Task.Backgroundable(project, "Digma: update views") {
+//            //sometimes the views models are updated before the tool window is initialized.
+//            //it happens when files are re-opened early before the tool window, and CaretContextService.contextChanged
+//            //is invoked and updates the models.
+//            //SummaryViewService is also initialized before the tool window is opened, it will get the event when
+//            // the environment is loaded and will update its model but will not update the ui because the panel is
+//            // not initialized yet.
+//            //only at this stage the panels are constructed already. just calling updateUi() for all view services
+//            // will actually update the UI.
+//            @Override
+//            public void run(@NotNull ProgressIndicator indicator) {
+//                project.getService(InsightsViewService.class).updateUi();
+//                project.getService(ErrorsViewService.class).updateUi();
+//                project.getService(SummaryViewService.class).updateUi();
+//            }
+//        }.queue();
 
 
         //sometimes there is a race condition on startup, a contextChange is fired before method info is available.
         //calling environmentChanged will fix it
-        BackendConnectionMonitor backendConnectionMonitor = project.getService(BackendConnectionMonitor.class);
-        if (backendConnectionMonitor.isConnectionOk()) {
-            Backgroundable.ensureBackground(project, "change environment", () -> {
-                EnvironmentChanged publisher = project.getMessageBus().syncPublisher(EnvironmentChanged.ENVIRONMENT_CHANGED_TOPIC);
-                publisher.environmentChanged(project.getService(AnalyticsService.class).getEnvironment().getCurrent());
-            });
-        }
+//        BackendConnectionMonitor backendConnectionMonitor = project.getService(BackendConnectionMonitor.class);
+//        if (backendConnectionMonitor.isConnectionOk()) {
+//            Backgroundable.ensureBackground(project, "change environment", () -> {
+//                EnvironmentChanged publisher = project.getMessageBus().syncPublisher(EnvironmentChanged.ENVIRONMENT_CHANGED_TOPIC);
+//                publisher.environmentChanged(project.getService(AnalyticsService.class).getEnvironment().getCurrent());
+//            });
+//        }
 
     }
+
+
 
 
     private static void createSummaryTab(@NotNull Project project, @NotNull ToolWindow toolWindow, ContentFactory contentFactory) {
