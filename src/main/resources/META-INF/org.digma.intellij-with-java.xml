@@ -1,6 +1,6 @@
 <idea-plugin>
 
-    <depends>org.jetbrains.idea.maven</depends>
+    <depends optional="true" config-file="org.digma.intellij-with-maven.xml">org.jetbrains.idea.maven</depends>
     <depends>org.jetbrains.plugins.gradle</depends>
 
     <extensions defaultExtensionNs="com.intellij">
