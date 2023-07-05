@@ -35,7 +35,7 @@ import kotlin.Pair;
 import org.digma.intellij.plugin.common.EDT;
 import org.digma.intellij.plugin.common.ReadActions;
 import org.digma.intellij.plugin.editor.EditorUtils;
-import org.digma.intellij.plugin.idea.build.BuildSystemCheckerService;
+import org.digma.intellij.plugin.idea.build.BuildSystemCheckerSrv;
 import org.digma.intellij.plugin.idea.build.JavaBuildSystem;
 import org.digma.intellij.plugin.log.Log;
 import org.digma.intellij.plugin.model.discovery.DocumentInfo;
@@ -267,7 +267,7 @@ public class JavaLanguageService implements LanguageService {
     @Override
     public void addDependencyToOtelLib(@NotNull Project project, @NotNull String methodId) {
         Module module = getModuleOfMethodId(methodId);
-        JavaBuildSystem moduleBuildSystem = BuildSystemCheckerService.getInstance(project).determineBuildSystem(module);
+        JavaBuildSystem moduleBuildSystem = BuildSystemCheckerSrv.getInstance(project).determineBuildSystem(module);
         UnifiedDependency dependencyLib = MapBuildSystem2Dependency.get(moduleBuildSystem);
 
         var dependencyModifierService = DependencyModifierService.getInstance(project);

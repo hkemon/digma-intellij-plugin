@@ -13,7 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.digma.intellij.plugin.common.ReadActions
-import org.digma.intellij.plugin.idea.build.BuildSystemCheckerService
+import org.digma.intellij.plugin.idea.build.BuildSystemCheckerSrv
 import org.digma.intellij.plugin.idea.build.JavaBuildSystem
 import org.digma.intellij.plugin.idea.deps.ModuleExt
 import org.digma.intellij.plugin.idea.deps.ModulesDepsService
@@ -112,7 +112,7 @@ class QuarkusConfigureDepsService(private val project: Project) : Disposable {
 
     protected fun addDependenciesOfQuarkusOtelTo(moduleExt: ModuleExt) {
         val module = moduleExt.module
-        val moduleBuildSystem = BuildSystemCheckerService.getInstance(project).determineBuildSystem(module)
+        val moduleBuildSystem = BuildSystemCheckerSrv.getInstance(project).determineBuildSystem(module)
         val dependencyLib = getQuarkusOtelDependency(moduleBuildSystem, moduleExt.metadata.quarkusVersion!!)
 
 //        println("adding dep to module '${module.name}' quarkusOtel ${dependencyLib}")

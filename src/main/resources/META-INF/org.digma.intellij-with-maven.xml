@@ -2,7 +2,7 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="org.digma.intellij.plugin.idea.build.BuildSystemCheckerService"/>
+        <projectService serviceImplementation="org.digma.intellij.plugin.idea.build.BuildSystemCheckerSrv"/>
     </extensions>
 
 
