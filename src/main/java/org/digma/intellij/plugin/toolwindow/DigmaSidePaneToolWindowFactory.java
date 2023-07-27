@@ -26,7 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.Function;
 
-import static org.digma.intellij.plugin.ui.common.InstallationWizardSidePanelWindowPanelKt.createInstallationWizardSidePanelWindowPanel;
+import static org.digma.intellij.plugin.ui.common.InstallationWizardAutoInstallWrapperKt.createInstallationWizardWrapper;
 import static org.digma.intellij.plugin.ui.common.MainToolWindowPanelKt.createMainToolWindowPanel;
 
 
@@ -78,7 +78,16 @@ public class DigmaSidePaneToolWindowFactory implements ToolWindowFactory {
         // necessary to move more code. but anyway the Supplier is fine here.
         //when ever we need to show the wizard it will be created new and disposed when finished, its probably not a
         // good idea to keep it in memory after its finished.
-        Function<Boolean, DisposablePanel> wizardPanelBuilder = wizardSkipInstallationStep -> createInstallationWizardSidePanelWindowPanel(project, wizardSkipInstallationStep);
+//        Function<Boolean, DisposablePanel> wizardPanelBuilder = wizardSkipInstallationStep -> createInstallationWizardSidePanelWindowPanel(project, wizardSkipInstallationStep);
+
+
+        Function<Boolean, DisposablePanel> wizardPanelBuilder = new Function<Boolean, DisposablePanel>() {
+            @Override
+            public DisposablePanel apply(Boolean wizardSkipInstallationStep) {
+                return createInstallationWizardWrapper(project, wizardSkipInstallationStep);
+            }
+        };
+
         MainToolWindowCardsController.getInstance(project).initComponents(toolWindow,mainContent,cardsPanel,contentPanel,wizardPanelBuilder);
 
         if (IDEUtilsService.shouldOpenWizard()) {
