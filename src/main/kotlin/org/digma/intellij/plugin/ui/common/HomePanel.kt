@@ -27,12 +27,12 @@ class HomePanel(project: Project) : JPanel() {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         border = JBUI.Borders.empty()
 
-        add(tabbedPane)
+        add(createAssetsPanel(project))
         tabbedPane.isOpaque = false
         tabbedPane.border = JBUI.Borders.empty()
 
-        val assetsPanel = createAssetsPanel(project);
-        tabbedPane.addTab(ASSETS_TAB_NAME, assetsPanel)
+//        val assetsPanel = createAssetsPanel(project);
+        tabbedPane.addTab(ASSETS_TAB_NAME, JPanel())
 
         val dashboardPanel = createDashboardPanel(project);
         tabbedPane.addTab(DASHBOARD_TAB_NAME, dashboardPanel)
