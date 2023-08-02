@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.digma.intellij.plugin.model.discovery.SpanInfo
 import org.digma.intellij.plugin.model.rest.insights.SpanDurationsPercentile
 import java.beans.ConstructorProperties
-import java.time.ZonedDateTime
+import java.sql.Timestamp
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,7 +13,6 @@ data class CodeObjectDurationChangeEvent
 @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 @ConstructorProperties(
     "codeObjectId",
-    "environment",
     "eventTime",
     "eventRecognitionTime",
     "spanCodeObjectId",
@@ -21,10 +20,9 @@ data class CodeObjectDurationChangeEvent
     "changedDurationPercentile",
 )
 constructor(
-    override val codeObjectId: String?,
-    override val environment: String,
-    override val eventTime: ZonedDateTime,
-    override val eventRecognitionTime: ZonedDateTime,
+    override val codeObjectId: String,
+    override val eventTime: Timestamp,
+    override val eventRecognitionTime: Timestamp,
     val spanCodeObjectId: String,
     val span: SpanInfo,
     val changedDurationPercentile: SpanDurationsPercentile,

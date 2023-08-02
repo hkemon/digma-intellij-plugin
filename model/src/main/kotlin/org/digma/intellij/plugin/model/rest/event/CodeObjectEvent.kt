@@ -3,7 +3,7 @@ package org.digma.intellij.plugin.model.rest.event
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.time.ZonedDateTime
+import java.sql.Timestamp
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,12 +16,10 @@ import java.time.ZonedDateTime
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = CodeObjectDurationChangeEvent::class, name = "DurationChangeEvent"),
-    JsonSubTypes.Type(value = FirstImportantInsightEvent::class, name = "FirstImportantInsight"),
 )
-interface CodeObjectEvent {
+interface CodeObjectEvent{
     val type: CodeObjectEventType
-    val environment: String
-    val codeObjectId: String?
-    val eventTime: ZonedDateTime
-    val eventRecognitionTime: ZonedDateTime
+    val codeObjectId: String
+    val eventTime: Timestamp
+    val eventRecognitionTime: Timestamp
 }

@@ -215,8 +215,9 @@ public class AnalyticsService implements Disposable {
     }
 
 
-    public LatestCodeObjectEventsResponse getLatestEvents(@NotNull String lastReceivedTime) throws AnalyticsServiceException{
-        return executeCatching(() -> analyticsProviderProxy.getLatestEvents(new LatestCodeObjectEventsRequest(environment.getEnvironments(),lastReceivedTime)));
+    public LatestCodeObjectEventsResponse getLatestEvents() throws AnalyticsServiceException{
+        var env = getCurrentEnvironment();
+        return executeCatching(() -> analyticsProviderProxy.getLatestEvents(new LatestCodeObjectEventsRequest(env)));
     }
 
 
