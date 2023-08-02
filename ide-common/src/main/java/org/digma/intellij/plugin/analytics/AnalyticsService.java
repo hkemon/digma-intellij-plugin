@@ -468,7 +468,9 @@ public class AnalyticsService implements Disposable {
                 }
 
                 if (!PersistenceService.getInstance().getState().getFirstTimeConnectionEstablished()) {
+                    Log.log(LOGGER::warn, "First connection to Analytics service established");
                     ActivityMonitor.getInstance(project).registerFirstConnectionEstablished();
+                    Log.log(LOGGER::warn, "after registering first connection established");
                     PersistenceService.getInstance().getState().setFirstTimeConnectionEstablished(true);
                 }
 

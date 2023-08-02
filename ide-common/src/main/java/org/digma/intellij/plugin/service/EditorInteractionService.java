@@ -61,7 +61,7 @@ public class EditorInteractionService implements CaretContextService, Disposable
         // or mark the connection as lost.
         //todo: one side effect here is that if connection lost and regained the context will still be the last one that
         // succeeded and that's what will be shown to user until another context change.
-        if (!BackendConnectionUtil.getInstance(project).testConnectionToBackend()) {
+        if (!BackendConnectionUtil.getInstance(project).testConnectionToBackend(project)) {
             Log.log(logger::debug, "No connection to backend, not executing contextChanged for '{}'", methodUnderCaret.getId());
             MainToolWindowCardsController.getInstance(project).showMainPanel();
             return;

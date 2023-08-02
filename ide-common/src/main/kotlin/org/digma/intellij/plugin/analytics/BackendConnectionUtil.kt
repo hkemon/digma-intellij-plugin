@@ -19,12 +19,12 @@ class BackendConnectionUtil(project: Project) {
     }
 
     init {
-        backendConnectionMonitor = project.getService(BackendConnectionMonitor::class.java)
+        backendConnectionMonitor = BackendConnectionMonitor.getInstance(project)
         val analyticsService = AnalyticsService.getInstance(project)
         environmentsSupplier = analyticsService.environment
     }
 
-    fun testConnectionToBackend(): Boolean {
+    fun testConnectionToBackend(project:Project): Boolean {
 
         //if called on background thread refreshNowOnBackground will run on the same thread ,
         // otherwise refreshNowOnBackground will run on background and isConnectionOk will return old result,
@@ -32,7 +32,7 @@ class BackendConnectionUtil(project: Project) {
         Log.log(logger::debug, "Triggering environmentsSupplier.refresh")
         environmentsSupplier.refreshNowOnBackground()
 
-        return backendConnectionMonitor.isConnectionOk()
+        return BackendConnectionMonitor.getInstance(project).isConnectionOk()
     }
 
 }

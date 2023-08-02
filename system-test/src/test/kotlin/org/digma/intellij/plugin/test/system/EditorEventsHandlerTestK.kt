@@ -27,6 +27,7 @@ class EditorEventsHandlerTestK : BasePlatformTestCase() {
 
         val (fileUri, methods) = languageService.buildDocumentInfo(psiFile)
         logger.debug("Got DocumentInfo for :{}", psiFile)
+        assert(true)
     }
 
 }

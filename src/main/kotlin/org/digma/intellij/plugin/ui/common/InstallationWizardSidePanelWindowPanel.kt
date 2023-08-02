@@ -59,7 +59,7 @@ fun createInstallationWizardSidePanelWindowPanel(project: Project): DisposablePa
 
     //at this stage the AnalyticsService was initialized already and if there is no connection then
     // BackendConnectionMonitor should already know that
-    val isServerConnectedAlready = BackendConnectionUtil.getInstance(project).testConnectionToBackend()
+    val isServerConnectedAlready = BackendConnectionUtil.getInstance(project).testConnectionToBackend(project)
 
     val jbCefBrowser = JBCefBrowserBuilderCreator.create()
         .setUrl("https://$RESOURCE_FOLDER_NAME/index.html")
@@ -147,7 +147,7 @@ fun createInstallationWizardSidePanelWindowPanel(project: Project): DisposablePa
             }
             if (JCefMessagesUtils.INSTALLATION_WIZARD_CHECK_CONNECTION.equals(action, ignoreCase = true)) {
                 val jcefConnectionCheckMessagePayload: JcefConnectionCheckMessagePayload =
-                    if (BackendConnectionUtil.getInstance(project).testConnectionToBackend()) {
+                    if (BackendConnectionUtil.getInstance(project).testConnectionToBackend(project)) {
                         JcefConnectionCheckMessagePayload(ConnectionCheckResult.SUCCESS.value)
                     } else {
                         JcefConnectionCheckMessagePayload(ConnectionCheckResult.FAILURE.value)
