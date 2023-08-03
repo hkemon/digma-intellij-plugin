@@ -63,6 +63,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.net.http.HttpTimeoutException;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -215,7 +216,7 @@ public class AnalyticsService implements Disposable {
     }
 
 
-    public LatestCodeObjectEventsResponse getLatestEvents(@NotNull String lastReceivedTime) throws AnalyticsServiceException{
+    public LatestCodeObjectEventsResponse getLatestEvents(@NotNull ZonedDateTime lastReceivedTime) throws AnalyticsServiceException{
         return executeCatching(() -> analyticsProviderProxy.getLatestEvents(new LatestCodeObjectEventsRequest(environment.getEnvironments(),lastReceivedTime)));
     }
 

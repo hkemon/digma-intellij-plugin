@@ -52,10 +52,10 @@ class InsightsNotificationsService(val project: Project) : Disposable {
 
                 try {
 
-                    var lastEventTime = PersistenceService.getInstance().state.lastInsightsEventTime
-                    if (lastEventTime == null) {
-                        lastEventTime = ZonedDateTime.now().minus(7, ChronoUnit.DAYS).withZoneSameInstant(ZoneOffset.UTC).toString()
-                    }
+                    val lastEventTime:ZonedDateTime = PersistenceService.getInstance().state.lastInsightsEventTime?.let {
+                        ZonedDateTime.parse(it)
+                    } ?:  ZonedDateTime.now().minus(7, ChronoUnit.DAYS).withZoneSameInstant(ZoneOffset.UTC)
+
 
                     val events = project.service<AnalyticsService>().getLatestEvents(lastEventTime)
 

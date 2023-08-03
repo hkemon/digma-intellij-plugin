@@ -1,3 +1,5 @@
 package org.digma.intellij.plugin.model.rest.event
 
-data class LatestCodeObjectEventsRequest(val environments: List<String>,val fromDate: String)
+import java.time.ZonedDateTime
+
+data class LatestCodeObjectEventsRequest(val environments: List<String>,val fromDate: ZonedDateTime)
