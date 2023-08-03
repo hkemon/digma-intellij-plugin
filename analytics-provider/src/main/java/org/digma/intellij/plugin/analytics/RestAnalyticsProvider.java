@@ -2,6 +2,7 @@ package org.digma.intellij.plugin.analytics;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.io.CharStreams;
 import okhttp3.OkHttpClient;
@@ -297,6 +298,7 @@ public class RestAnalyticsProvider implements AnalyticsProvider, Closeable {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setTimeZone(TimeZone.getTimeZone("UTC"));
             objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             //objectMapper can be configured here is necessary
             objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             objectMapper.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
