@@ -96,18 +96,20 @@ public class ErrorsActionsService{
     }
 
     public void closeErrorDetails() {
-        insightsAndErrorsTabsHelper.errorDetailsOff();
-        errorsViewService.closeErrorDetails();
-        insightsAndErrorsTabsHelper.errorDetailsClosed();
-        if (scopeBeforeErrorDetails != null && statusBeforeErrorDetails != null) {
-            insightsViewService.getModel().setScope(scopeBeforeErrorDetails);
-            insightsViewService.getModel().setStatus(statusBeforeErrorDetails);
-            insightsViewService.notifyModelChangedAndUpdateUi();
-            scopeBeforeErrorDetails = null;
-            statusBeforeErrorDetails = null;
+        if (insightsAndErrorsTabsHelper.isErrorDetailsOn()) {
+            insightsAndErrorsTabsHelper.errorDetailsOff();
+            errorsViewService.closeErrorDetails();
+            insightsAndErrorsTabsHelper.errorDetailsClosed();
+            if (scopeBeforeErrorDetails != null && statusBeforeErrorDetails != null) {
+                insightsViewService.getModel().setScope(scopeBeforeErrorDetails);
+                insightsViewService.getModel().setStatus(statusBeforeErrorDetails);
+                insightsViewService.notifyModelChangedAndUpdateUi();
+                scopeBeforeErrorDetails = null;
+                statusBeforeErrorDetails = null;
+            }
+            errorsViewService.updateUi();
+            insightsViewService.updateUi();
         }
-        errorsViewService.updateUi();
-        insightsViewService.updateUi();
     }
 
 

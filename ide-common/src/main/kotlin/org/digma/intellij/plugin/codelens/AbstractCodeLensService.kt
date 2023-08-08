@@ -157,12 +157,10 @@ abstract class AbstractCodeLensService(private val project: Project): Disposable
         codeLensCache.clear()
 
         EDT.ensureEDT {
-            WriteAction.run<RuntimeException> {
-                val manager = PsiManager.getInstance(project)
-                manager.dropPsiCaches()
-                manager.dropResolveCaches()
-                DaemonCodeAnalyzer.getInstance(project).restart()
-            }
+            val manager = PsiManager.getInstance(project)
+            manager.dropPsiCaches()
+            manager.dropResolveCaches()
+            DaemonCodeAnalyzer.getInstance(project).restart()
         }
 
 //        ReadAction.nonBlocking(RunnableCallable{

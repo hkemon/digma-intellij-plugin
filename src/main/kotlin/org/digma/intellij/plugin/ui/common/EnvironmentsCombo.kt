@@ -70,9 +70,11 @@ class EnvironmentsCombo(val project: Project, navigationPanel: NavigationPanel) 
         project.messageBus.connect(myParentDisposable).subscribe(EnvironmentChanged.ENVIRONMENT_CHANGED_TOPIC, object : EnvironmentChanged {
             override fun environmentChanged(newEnv: String?, refreshInsightsView: Boolean) {
 
-                cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
-                navigationPanel.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
-                isEnabled = true
+                EDT.ensureEDT {
+                    cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
+                    navigationPanel.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
+                    isEnabled = true
+                }
 
                 if (selectedItem == null || newEnv == null) {
                     return
