@@ -188,7 +188,7 @@ public class CSharpLanguageService extends LifetimedProjectComponent implements 
         }
 
 
-        CodeLensHost.getInstance(project).environmentChanged(newEnv);
+//        CodeLensHost.getInstance(project).environmentChanged(newEnv);
     }
 
 

@@ -25,10 +25,10 @@ class ConnectionActivityMonitor(private val project: Project) : AnalyticsService
     }
 
     init {
-        project.messageBus.connect().subscribe(
-            AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC,
-            this
-        )
+//        project.messageBus.connect().subscribe(
+//            AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC,
+//            this
+//        )
         asyncFetchAndRegisterServerVersion()
     }
 

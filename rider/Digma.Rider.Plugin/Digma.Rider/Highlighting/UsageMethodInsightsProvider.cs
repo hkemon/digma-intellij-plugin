@@ -6,7 +6,7 @@ using JetBrains.Util;
 
 namespace Digma.Rider.Highlighting
 {
-    [SolutionComponent]
+    // [SolutionComponent]
     public class UsageMethodInsightsProvider : BaseMethodInsightsProvider
     {
         public UsageMethodInsightsProvider(ISolution solution,ILogger logger,ShowToolWindowHost showToolWindowHost)

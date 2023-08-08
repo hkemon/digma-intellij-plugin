@@ -4,7 +4,7 @@ using JetBrains.Util;
 
 namespace Digma.Rider.Highlighting
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public class SlowEndpointMethodInsightsProvider : BaseMethodInsightsProvider
     {
         public SlowEndpointMethodInsightsProvider(ISolution solution,ILogger logger,ShowToolWindowHost showToolWindowHost) 

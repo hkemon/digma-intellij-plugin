@@ -46,17 +46,17 @@ public class Environment implements EnvironmentsSupplier {
         //call refresh on environment when connection is lost, in some cases its necessary for some components to reset or update ui.
         //usually these components react to environment change events, so this will trigger an environment change if not already happened before.
         //if the connection lost happened during environment refresh then it may cause a second redundant event but will do no harm.
-        project.getMessageBus().connect(analyticsService).subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
-            @Override
-            public void connectionLost() {
-                refreshNowOnBackground();
-            }
-
-            @Override
-            public void connectionGained() {
-                refreshNowOnBackground();
-            }
-        });
+//        project.getMessageBus().connect(analyticsService).subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
+//            @Override
+//            public void connectionLost() {
+//                refreshNowOnBackground();
+//            }
+//
+//            @Override
+//            public void connectionGained() {
+//                refreshNowOnBackground();
+//            }
+//        });
     }
 
 

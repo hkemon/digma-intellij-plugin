@@ -62,7 +62,7 @@ class CaretListener {
             return;
         }
 
-        addCaretListener(editor, file);
+//        addCaretListener(editor, file);
     }
 
 

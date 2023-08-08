@@ -21,20 +21,20 @@ abstract class AbstractViewService(val project: Project) : Disposable {
 
     init {
         //subscribe to connection lost/gained , call doUpdateUi() on each event so that the no connection card will show or hide
-        analyticsConnectionEventsConnection.subscribe(
-            AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC,
-            handler = object : AnalyticsServiceConnectionEvent {
-                override fun connectionLost() {
-                    doConnectionLost()
-                    doUpdateUi()
-                }
-
-                override fun connectionGained() {
-                    doConnectionGained()
-                    doUpdateUi()
-                    }
-                }
-            )
+//        analyticsConnectionEventsConnection.subscribe(
+//            AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC,
+//            handler = object : AnalyticsServiceConnectionEvent {
+//                override fun connectionLost() {
+//                    doConnectionLost()
+//                    doUpdateUi()
+//                }
+//
+//                override fun connectionGained() {
+//                    doConnectionGained()
+//                    doUpdateUi()
+//                    }
+//                }
+//            )
     }
 
 

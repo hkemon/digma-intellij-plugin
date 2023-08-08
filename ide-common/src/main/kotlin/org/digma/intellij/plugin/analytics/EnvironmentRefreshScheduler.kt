@@ -12,10 +12,10 @@ import org.digma.intellij.plugin.settings.SettingsState
 @Suppress("UnstableApiUsage")
 fun scheduleEnvironmentRefresh(parentDisposable: Disposable, environemnt: Environment) {
 
-    DisposingScope(parentDisposable).launch {
-        while (this.isActive) {
-            delay(service<SettingsState>().refreshDelay.toLong() * 1000)
-            environemnt.refreshNowOnBackground()
-        }
-    }
+//    DisposingScope(parentDisposable).launch {
+//        while (this.isActive) {
+//            delay(service<SettingsState>().refreshDelay.toLong() * 1000)
+//            environemnt.refreshNowOnBackground()
+//        }
+//    }
 }

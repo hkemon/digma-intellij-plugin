@@ -4,7 +4,7 @@ using JetBrains.Util;
 
 namespace Digma.Rider.Highlighting
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public class ErrorHotspotMethodInsightsProvider : BaseMethodInsightsProvider
     {
         public ErrorHotspotMethodInsightsProvider(ISolution solution,ILogger logger,ShowToolWindowHost showToolWindowHost) 

@@ -66,23 +66,23 @@ public class MainToolWindowCardsController implements Disposable {
     public MainToolWindowCardsController(@NotNull Project project) {
         this.project = project;
 
-        project.getMessageBus()
-                .connect(this)
-                .subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
-                    @Override
-                    public void connectionLost() {
-                        Log.log(LOGGER::debug, "Got connectionLost");
-                        isConnectionLost.set(true);
-                        showNoConnection();
-                    }
-
-                    @Override
-                    public void connectionGained() {
-                        Log.log(LOGGER::debug, "Got connectionGained");
-                        isConnectionLost.set(false);
-                        showMainPanel();
-                    }
-                });
+//        project.getMessageBus()
+//                .connect(this)
+//                .subscribe(AnalyticsServiceConnectionEvent.ANALYTICS_SERVICE_CONNECTION_EVENT_TOPIC, new AnalyticsServiceConnectionEvent() {
+//                    @Override
+//                    public void connectionLost() {
+//                        Log.log(LOGGER::debug, "Got connectionLost");
+//                        isConnectionLost.set(true);
+//                        showNoConnection();
+//                    }
+//
+//                    @Override
+//                    public void connectionGained() {
+//                        Log.log(LOGGER::debug, "Got connectionGained");
+//                        isConnectionLost.set(false);
+//                        showMainPanel();
+//                    }
+//                });
 
     }
 

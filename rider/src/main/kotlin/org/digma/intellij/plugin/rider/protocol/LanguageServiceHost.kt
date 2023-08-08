@@ -154,38 +154,40 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
     //avoid using this method and always use overloaded with FileEditor because we need the ProjectModelId
     @Suppress("unused")
     fun getDocumentInfo(psiFile: PsiFile): DocumentInfo? {
-        Log.log(logger::debug, "Got request for getDocumentInfo for PsiFile {}", psiFile.virtualFile)
-        var editor: FileEditor? = null
-        if (EDT.isEdt()) {
-            editor = FileEditorManager.getInstance(project).getSelectedEditor(psiFile.virtualFile)
-        }
-        return getDocumentInfo(psiFile, editor)
+//        Log.log(logger::debug, "Got request for getDocumentInfo for PsiFile {}", psiFile.virtualFile)
+//        var editor: FileEditor? = null
+//        if (EDT.isEdt()) {
+//            editor = FileEditorManager.getInstance(project).getSelectedEditor(psiFile.virtualFile)
+//        }
+//        return getDocumentInfo(psiFile, editor)
+        return null
     }
 
 
     //this method should never be called on EDT
     fun getDocumentInfo(psiFile: PsiFile, fileEditor: FileEditor?): DocumentInfo? {
 
-        Log.log(logger::debug,"Got request for getDocumentInfo for PsiFile {}, selectedEditor {}, solution loaded {}",psiFile.virtualFile,fileEditor,solutionLoaded)
-
-        val projectModelId: Int? = tryGetProjectModelId(psiFile, fileEditor, project)
-        val psiUri = PsiUtils.psiFileToUri(psiFile)
-        val psiId = PsiFileID(projectModelId, psiUri)
-
-        Log.log(logger::debug, "Sending request to getDocumentInfo with {}", psiId)
-
-        val riderDocumentInfo: RiderDocumentInfo? =
-            runBlockingCancellable {
-                model.getDocumentInfo.startSuspending((psiId))
-            }
-
-        if (riderDocumentInfo == null) {
-            Log.log(logger::debug, "Could not load RiderDocumentInfo for {}", psiFile.virtualFile)
-        } else {
-            Log.log(logger::debug, "RiderDocumentInfo for {} loaded '{}'", psiFile.virtualFile, riderDocumentInfo)
-        }
-
-        return riderDocumentInfo?.let { toModel(riderDocumentInfo) }
+//        Log.log(logger::debug,"Got request for getDocumentInfo for PsiFile {}, selectedEditor {}, solution loaded {}",psiFile.virtualFile,fileEditor,solutionLoaded)
+//
+//        val projectModelId: Int? = tryGetProjectModelId(psiFile, fileEditor, project)
+//        val psiUri = PsiUtils.psiFileToUri(psiFile)
+//        val psiId = PsiFileID(projectModelId, psiUri)
+//
+//        Log.log(logger::debug, "Sending request to getDocumentInfo with {}", psiId)
+//
+//        val riderDocumentInfo: RiderDocumentInfo? =
+//            runBlockingCancellable {
+//                model.getDocumentInfo.startSuspending((psiId))
+//            }
+//
+//        if (riderDocumentInfo == null) {
+//            Log.log(logger::debug, "Could not load RiderDocumentInfo for {}", psiFile.virtualFile)
+//        } else {
+//            Log.log(logger::debug, "RiderDocumentInfo for {} loaded '{}'", psiFile.virtualFile, riderDocumentInfo)
+//        }
+//
+//        return riderDocumentInfo?.let { toModel(riderDocumentInfo) }
+        return null
     }
 
 
@@ -193,35 +195,36 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
     // to find selected editor only if executed on EDT.
     fun detectMethodUnderCaret(psiFile: PsiFile, selectedEditor: Editor?, caretOffset: Int): MethodUnderCaret {
 
-        Log.log(logger::debug,"Got request to detectMethodUnderCaret for PsiFile {}, selectedEditor {}, solution loaded {}",psiFile.virtualFile,selectedEditor,solutionLoaded)
+//        Log.log(logger::debug,"Got request to detectMethodUnderCaret for PsiFile {}, selectedEditor {}, solution loaded {}",psiFile.virtualFile,selectedEditor,solutionLoaded)
+//
+//        //always try to find ProjectModelId.
+//        //projectModelId is the preferred way to find a IPsiSourceFile in rider backend. the backend will try to find
+//        // by projectModelId and will fall back to find by uri.
+//        val projectModelId: Int? = tryGetProjectModelId(psiFile, selectedEditor, project)
+//
+//        val psiUri = PsiUtils.psiFileToUri(psiFile)
+//        val psiId = PsiFileID(projectModelId, psiUri)
+//
+//        Log.log(logger::debug, "Sending request to detectMethodUnderCaret with {}", psiId)
+//
+//        val riderMethodUnderCaret: RiderMethodUnderCaret? =
+//            if (ApplicationManager.getApplication().isDispatchThread) {
+//                model.detectMethodUnderCaret.callSynchronously(MethodUnderCaretRequest(psiId, caretOffset), getProtocol(model))
+//            } else {
+//                runBlockingCancellable {
+//                    model.detectMethodUnderCaret.startSuspending(MethodUnderCaretRequest(psiId, caretOffset))
+//                }
+//            }
+//
+//
+//        if (riderMethodUnderCaret == null) {
+//            Log.log(logger::debug, "Could not load RiderMethodUnderCaret for {}", psiFile.virtualFile)
+//        } else {
+//            Log.log(logger::debug, "Found RiderMethodUnderCaret for {} , '{}'", psiFile.virtualFile, riderMethodUnderCaret)
+//        }
 
-        //always try to find ProjectModelId.
-        //projectModelId is the preferred way to find a IPsiSourceFile in rider backend. the backend will try to find
-        // by projectModelId and will fall back to find by uri.
-        val projectModelId: Int? = tryGetProjectModelId(psiFile, selectedEditor, project)
-
-        val psiUri = PsiUtils.psiFileToUri(psiFile)
-        val psiId = PsiFileID(projectModelId, psiUri)
-
-        Log.log(logger::debug, "Sending request to detectMethodUnderCaret with {}", psiId)
-
-        val riderMethodUnderCaret: RiderMethodUnderCaret? =
-            if (ApplicationManager.getApplication().isDispatchThread) {
-                model.detectMethodUnderCaret.callSynchronously(MethodUnderCaretRequest(psiId, caretOffset), getProtocol(model))
-            } else {
-                runBlockingCancellable {
-                    model.detectMethodUnderCaret.startSuspending(MethodUnderCaretRequest(psiId, caretOffset))
-                }
-            }
-
-
-        if (riderMethodUnderCaret == null) {
-            Log.log(logger::debug, "Could not load RiderMethodUnderCaret for {}", psiFile.virtualFile)
-        } else {
-            Log.log(logger::debug, "Found RiderMethodUnderCaret for {} , '{}'", psiFile.virtualFile, riderMethodUnderCaret)
-        }
-
-        return riderMethodUnderCaret?.toMethodUnderCaret() ?: MethodUnderCaret("", "", "", "", "")
+//        return riderMethodUnderCaret?.toMethodUnderCaret() ?: MethodUnderCaret("", "", "", "", "")
+        return MethodUnderCaret("", "", "", "", "")
     }
 
 
@@ -231,19 +234,19 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
 
         val result = HashMap<String, String>()
 
-        val workspaceUriPairs =
-            if (ApplicationManager.getApplication().isDispatchThread) {
-                model.getWorkspaceUrisForErrorStackTrace.callSynchronously(codeObjectIds, getProtocol(model))
-            } else {
-                runBlockingCancellable {
-                    model.getWorkspaceUrisForErrorStackTrace.startSuspending(codeObjectIds)
-                }
-            }
-
-        workspaceUriPairs?.forEach {
-            result[it.codeObjectId] = it.workspaceUri
-        }
-        Log.log(logger::debug, "Found WorkspaceUrisForErrorStackTrace {}", result)
+//        val workspaceUriPairs =
+//            if (ApplicationManager.getApplication().isDispatchThread) {
+//                model.getWorkspaceUrisForErrorStackTrace.callSynchronously(codeObjectIds, getProtocol(model))
+//            } else {
+//                runBlockingCancellable {
+//                    model.getWorkspaceUrisForErrorStackTrace.startSuspending(codeObjectIds)
+//                }
+//            }
+//
+//        workspaceUriPairs?.forEach {
+//            result[it.codeObjectId] = it.workspaceUri
+//        }
+//        Log.log(logger::debug, "Found WorkspaceUrisForErrorStackTrace {}", result)
         return result
     }
 
@@ -253,19 +256,19 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
 
         val result = HashMap<String, Pair<String, Int>>()
 
-        val workspaceUriTuples =
-            if (ApplicationManager.getApplication().isDispatchThread) {
-                model.getWorkspaceUrisForMethodCodeObjectIds.callSynchronously(methodCodeObjectIds, getProtocol(model))
-            } else {
-                runBlockingCancellable {
-                    model.getWorkspaceUrisForMethodCodeObjectIds.startSuspending(methodCodeObjectIds)
-                }
-            }
-
-        workspaceUriTuples?.forEach {
-            result[it.codeObjectId] = Pair(it.workspaceUri, it.offset)
-        }
-        Log.log(logger::debug, "Found WorkspaceUrisForMethodCodeObjectIds {}", result)
+//        val workspaceUriTuples =
+//            if (ApplicationManager.getApplication().isDispatchThread) {
+//                model.getWorkspaceUrisForMethodCodeObjectIds.callSynchronously(methodCodeObjectIds, getProtocol(model))
+//            } else {
+//                runBlockingCancellable {
+//                    model.getWorkspaceUrisForMethodCodeObjectIds.startSuspending(methodCodeObjectIds)
+//                }
+//            }
+//
+//        workspaceUriTuples?.forEach {
+//            result[it.codeObjectId] = Pair(it.workspaceUri, it.offset)
+//        }
+//        Log.log(logger::debug, "Found WorkspaceUrisForMethodCodeObjectIds {}", result)
         return result
     }
 
@@ -275,45 +278,46 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
 
         val result = HashMap<String, Pair<String, Int>>()
 
-        val workspaceUriTuples =
-            if (ApplicationManager.getApplication().isDispatchThread) {
-                model.getSpansWorkspaceUris.callSynchronously(spanIds, getProtocol(model))
-            } else {
-                runBlockingCancellable {
-                    model.getSpansWorkspaceUris.startSuspending(spanIds)
-                }
-            }
-
-        workspaceUriTuples?.forEach {
-            result[it.codeObjectId] = Pair(it.workspaceUri, it.offset)
-        }
-        Log.log(logger::debug, "Found WorkspaceUrisForSpanIds {}", result)
+//        val workspaceUriTuples =
+//            if (ApplicationManager.getApplication().isDispatchThread) {
+//                model.getSpansWorkspaceUris.callSynchronously(spanIds, getProtocol(model))
+//            } else {
+//                runBlockingCancellable {
+//                    model.getSpansWorkspaceUris.startSuspending(spanIds)
+//                }
+//            }
+//
+//        workspaceUriTuples?.forEach {
+//            result[it.codeObjectId] = Pair(it.workspaceUri, it.offset)
+//        }
+//        Log.log(logger::debug, "Found WorkspaceUrisForSpanIds {}", result)
         return result
     }
 
 
     fun isCSharpMethod(methodCodeObjectId: String): Boolean {
 
-        Log.log(logger::debug, "Got request for isCSharpMethod {}, solution loaded {}", methodCodeObjectId, solutionLoaded)
-
-        //calls to this method with the same argument may happen many times.
-        // but languageServiceHost.isCSharpMethod is a call to resharper which is not the best performance,
-        // so keep all methods ids in a simple cache for later use.
-        // use the cache only after backend is fully loaded,there may be a result that was stored in
-        // the cache before the backend was loaded, and it may be wrong because there was no reference
-        // resolving in resharper.
-        // if there is a value in the cache that was stored before the solution fully loaded it will be cleared, this class
-        // listens to solution load event and clears the csharpMethodCache.
-        return if (SolutionLifecycleHost.getInstance(project).isBackendLoaded.value &&
-            csharpMethodCache.containsKey(methodCodeObjectId)
-        ) {
-            Log.log(logger::debug, "Returning isCSharpMethod for {} from local cache {}", methodCodeObjectId, csharpMethodCache[methodCodeObjectId])
-            csharpMethodCache[methodCodeObjectId] == true
-        } else {
-            val isCHarpMethod = isCSharpMethodImpl(methodCodeObjectId)
-            csharpMethodCache[methodCodeObjectId] = isCHarpMethod
-            isCHarpMethod
-        }
+//        Log.log(logger::debug, "Got request for isCSharpMethod {}, solution loaded {}", methodCodeObjectId, solutionLoaded)
+//
+//        //calls to this method with the same argument may happen many times.
+//        // but languageServiceHost.isCSharpMethod is a call to resharper which is not the best performance,
+//        // so keep all methods ids in a simple cache for later use.
+//        // use the cache only after backend is fully loaded,there may be a result that was stored in
+//        // the cache before the backend was loaded, and it may be wrong because there was no reference
+//        // resolving in resharper.
+//        // if there is a value in the cache that was stored before the solution fully loaded it will be cleared, this class
+//        // listens to solution load event and clears the csharpMethodCache.
+//        return if (SolutionLifecycleHost.getInstance(project).isBackendLoaded.value &&
+//            csharpMethodCache.containsKey(methodCodeObjectId)
+//        ) {
+//            Log.log(logger::debug, "Returning isCSharpMethod for {} from local cache {}", methodCodeObjectId, csharpMethodCache[methodCodeObjectId])
+//            csharpMethodCache[methodCodeObjectId] == true
+//        } else {
+//            val isCHarpMethod = isCSharpMethodImpl(methodCodeObjectId)
+//            csharpMethodCache[methodCodeObjectId] = isCHarpMethod
+//            isCHarpMethod
+//        }
+        return false
     }
 
 
@@ -333,11 +337,11 @@ class LanguageServiceHost(project: Project) : LifetimedProjectComponent(project)
 
 
     fun navigateToMethod(methodId: String) {
-        getProtocol(model).scheduler.invokeOrQueue {
-            //the message needs to be unique. if a message is the same as the previous one the event is not fired
-            val message = "{${Random.nextInt()}}$methodId"
-            model.navigateToMethod.fire(message)
-        }
+//        getProtocol(model).scheduler.invokeOrQueue {
+//            //the message needs to be unique. if a message is the same as the previous one the event is not fired
+//            val message = "{${Random.nextInt()}}$methodId"
+//            model.navigateToMethod.fire(message)
+//        }
     }
 
 

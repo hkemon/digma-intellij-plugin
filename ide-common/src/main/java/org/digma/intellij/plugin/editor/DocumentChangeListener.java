@@ -69,7 +69,7 @@ class DocumentChangeListener {
             return;
         }
 
-        addDocumentListener(editor, virtualFile);
+//        addDocumentListener(editor, virtualFile);
     }
 
     private void addDocumentListener(@NotNull Editor editor, @NotNull VirtualFile virtualFile) {

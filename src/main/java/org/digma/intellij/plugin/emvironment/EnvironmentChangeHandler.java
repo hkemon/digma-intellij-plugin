@@ -30,26 +30,26 @@ public class EnvironmentChangeHandler implements EnvironmentChanged {
     public void environmentChanged(String newEnv, boolean refreshInsightsView) {
 
         //for all languages and IDEs documentInfoService needs to refresh its data
-        documentInfoService.environmentChanged(newEnv);
-
-        //find any registered language service and call its environmentChanged method in case it has something to do
-        // that is specific for that language.
-        for (SupportedLanguages value : SupportedLanguages.values()) {
-
-            try {
-                @SuppressWarnings("unchecked") // the unchecked cast should be ok here
-                Class<? extends LanguageService> clazz = (Class<? extends LanguageService>) Class.forName(value.getLanguageServiceClassName());
-                LanguageService languageService = project.getService(clazz);
-                if (languageService != null) {
-                    languageService.environmentChanged(newEnv,refreshInsightsView);
-                }
-            } catch (Throwable e) {
-                //catch Throwable because there may be errors.
-                //ignore: some classes will fail to load , for example the CSharpLanguageService
-                //will fail to load if it's not rider because it depends on rider classes.
-                //don't log, it will happen too many times
-            }
-        }
+//        documentInfoService.environmentChanged(newEnv);
+//
+//        //find any registered language service and call its environmentChanged method in case it has something to do
+//        // that is specific for that language.
+//        for (SupportedLanguages value : SupportedLanguages.values()) {
+//
+//            try {
+//                @SuppressWarnings("unchecked") // the unchecked cast should be ok here
+//                Class<? extends LanguageService> clazz = (Class<? extends LanguageService>) Class.forName(value.getLanguageServiceClassName());
+//                LanguageService languageService = project.getService(clazz);
+//                if (languageService != null) {
+//                    languageService.environmentChanged(newEnv,refreshInsightsView);
+//                }
+//            } catch (Throwable e) {
+//                //catch Throwable because there may be errors.
+//                //ignore: some classes will fail to load , for example the CSharpLanguageService
+//                //will fail to load if it's not rider because it depends on rider classes.
+//                //don't log, it will happen too many times
+//            }
+//        }
     }
 
     @Override

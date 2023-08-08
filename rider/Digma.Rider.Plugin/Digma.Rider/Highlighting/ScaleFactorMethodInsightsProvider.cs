@@ -4,7 +4,7 @@ using JetBrains.Util;
 
 namespace Digma.Rider.Highlighting
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public class ScaleFactorMethodInsightsProvider : BaseMethodInsightsProvider
     {
         public ScaleFactorMethodInsightsProvider(ISolution solution,ILogger logger,ShowToolWindowHost showToolWindowHost) 

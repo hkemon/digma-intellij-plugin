@@ -4,7 +4,7 @@ using JetBrains.Util;
 
 namespace Digma.Rider.Highlighting
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public class CodeLensMethodInsightsProvider2 : BaseMethodInsightsProvider
     {
         public CodeLensMethodInsightsProvider2(
