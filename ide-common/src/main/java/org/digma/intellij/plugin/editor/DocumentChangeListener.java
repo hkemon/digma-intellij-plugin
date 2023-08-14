@@ -147,7 +147,7 @@ class DocumentChangeListener {
         DocumentInfo documentInfo = languageService.buildDocumentInfo(psiFile,fileEditor);
         Log.log(LOGGER::debug, "got DocumentInfo for {}", psiFile.getVirtualFile());
 
-        documentInfoService.addCodeObjects(psiFile, documentInfo);
+//        documentInfoService.addCodeObjects(psiFile, documentInfo);
         Log.log(LOGGER::debug, "documentInfoService updated with DocumentInfo for {}", psiFile.getVirtualFile());
 
     }
