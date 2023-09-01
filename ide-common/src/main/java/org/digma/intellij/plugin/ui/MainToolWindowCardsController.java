@@ -32,6 +32,7 @@ public class MainToolWindowCardsController implements Disposable {
 
     private static final Logger LOGGER = Logger.getInstance(MainToolWindowCardsController.class);
 
+
     public enum MainWindowCard {
         MAIN, NO_CONNECTION
     }
@@ -60,6 +61,9 @@ public class MainToolWindowCardsController implements Disposable {
 
     private TroubleshootingComponents troubleshooting = new TroubleshootingComponents();
     private Supplier<DisposablePanel> troubleshootingPanelBuilder;
+
+    private NotificationsComponents notifications = new NotificationsComponents();
+    private Supplier<DisposablePanel> allNotificationsPanelBuilder;
 
     private final AtomicBoolean isConnectionLost = new AtomicBoolean(false);
 
@@ -107,7 +111,8 @@ public class MainToolWindowCardsController implements Disposable {
                                @NotNull JPanel mainCardsPanel,
                                @NotNull JPanel contentPanel,
                                @NotNull Function<Boolean, DisposablePanel> wizardPanelBuilder,
-                               Supplier<DisposablePanel> troubleshootingPanelBuilder) {
+                               Supplier<DisposablePanel> troubleshootingPanelBuilder,
+                               Supplier<DisposablePanel> allNotificationsPanelBuilder) {
 
         Log.log(LOGGER::debug, "initComponents called");
 
@@ -125,6 +130,8 @@ public class MainToolWindowCardsController implements Disposable {
         this.wizardPanelBuilder = wizardPanelBuilder;
 
         this.troubleshootingPanelBuilder = troubleshootingPanelBuilder;
+
+        this.allNotificationsPanelBuilder = allNotificationsPanelBuilder;
 
         //it may be that there was a connection lost event before the panels were ready.
         // in that case show connection lost panel
@@ -229,6 +236,44 @@ public class MainToolWindowCardsController implements Disposable {
     }
 
 
+    public void showAllNotifications() {
+        Log.log(LOGGER::debug, "showAllNotifications called");
+
+        //in case showAllNotifications is called while notifications is already on
+        if (notifications.isOn()) {
+            Log.log(LOGGER::debug, project, "showAllNotifications was called but notifications on. nothing to do.");
+            return;
+        }
+
+        //build the notifications panel every time its necessary and dispose it when the notifications closed.
+        var notificationsPanel = allNotificationsPanelBuilder.get();
+        if (notificationsPanel != null) {
+            Content notificationsContent = ContentFactory.getInstance().createContent(notificationsPanel, null, false);
+            toolWindow.getContentManager().removeContent(mainContent, false);
+            toolWindow.getContentManager().addContent(notificationsContent);
+            notifications.notificationsContent = notificationsContent;
+            notifications.notificationsPanel = notificationsPanel;
+        } else {
+            Log.log(LOGGER::debug, project, "showAllNotifications was called but notificationsPanel is null. it may happen if the runtime JVM does not support JCEF");
+        }
+    }
+
+
+    public void closeAllNotifications() {
+        Log.log(LOGGER::debug, "closeAllNotifications called");
+
+        if (notifications.isOn()) {
+            toolWindow.getContentManager().removeContent(notifications.notificationsContent, true);
+            toolWindow.getContentManager().addContent(mainContent);
+            //dispose the notifications panel which will dispose the jcef browser
+            notifications.notificationsPanel.dispose();
+            notifications.notificationsContent = null;
+            notifications.notificationsPanel = null;
+
+        } else {
+            Log.log(LOGGER::debug, project, "closeAllNotifications was called but notifications is not on.");
+        }
+    }
 
     public void showMainPanel() {
 
@@ -304,6 +349,15 @@ public class MainToolWindowCardsController implements Disposable {
 
         public boolean isOn() {
             return troubleshootingContent != null && troubleshootingPanel != null;
+        }
+    }
+
+    private static class NotificationsComponents {
+        Content notificationsContent;
+        DisposablePanel notificationsPanel;
+
+        public boolean isOn() {
+            return notificationsContent != null && notificationsPanel != null;
         }
     }
 
