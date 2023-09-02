@@ -394,10 +394,28 @@ public class AnalyticsService implements Disposable {
     }
 
 
+    private NotificationsMock notificationsMock = new NotificationsMock(this);
+
     public String getNotifications(String notificationsStartDate, String userId, int pageNumber, int pageSize, boolean isRead) throws AnalyticsServiceException {
         var env = getCurrentEnvironment();
-        return executeCatching(() ->
+        String notificationsJson = executeCatching(() ->
                 analyticsProviderProxy.getNotifications(new NotificationsRequest(env, userId, notificationsStartDate, pageNumber, pageSize, isRead)));
+
+
+        //todo: temp mock
+        try {
+            var objectMapper = new ObjectMapper();
+            var node = objectMapper.readTree(notificationsJson);
+            var notifications = (ArrayNode) node.get("notifications");
+            if (notifications.isEmpty()) {
+                return notificationsMock.getNotifications(pageNumber, pageSize, isRead);
+            }
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return notificationsJson;
     }
 
     public void setReadNotificationsTime(String upToDateTime, String userId) throws AnalyticsServiceException {
@@ -406,11 +424,28 @@ public class AnalyticsService implements Disposable {
             analyticsProviderProxy.setReadNotificationsTime(new SetReadNotificationsRequest(env, userId, upToDateTime));
             return null;
         });
+
+        try {
+            notificationsMock.setAllRead();
+        } catch (JsonProcessingException e) {
+            //ignore
+        }
     }
 
     public UnreadNotificationsCountResponse getUnreadNotificationsCount(String notificationsStartDate, String userId) throws AnalyticsServiceException {
         var env = getCurrentEnvironment();
-        return executeCatching(() -> analyticsProviderProxy.getUnreadNotificationsCount(new GetUnreadNotificationsCountRequest(env, userId, notificationsStartDate)));
+        var unreadResponse = executeCatching(() -> analyticsProviderProxy.getUnreadNotificationsCount(new GetUnreadNotificationsCountRequest(env, userId, notificationsStartDate)));
+
+        //temp mock
+        if (unreadResponse.getUnreadCount() == 0) {
+            try {
+                return new UnreadNotificationsCountResponse(notificationsMock.getUnreadCount());
+            } catch (JsonProcessingException e) {
+                return new UnreadNotificationsCountResponse(0);
+            }
+        }
+
+        return unreadResponse;
     }
 
 
