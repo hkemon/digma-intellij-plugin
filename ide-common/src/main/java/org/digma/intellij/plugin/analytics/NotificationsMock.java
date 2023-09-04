@@ -82,7 +82,7 @@ public class NotificationsMock {
                     data.set("codeObject", codeObject);
                     codeObject.set("displayName", new TextNode(displayName));
                     codeObject.set("codeObjectId", new TextNode(spanCodeObjectId));
-                    notification.set("isRead", BooleanNode.FALSE);
+                    notification.set("isRead", isRead ? BooleanNode.TRUE : BooleanNode.FALSE);
                     notification.set("timestamp", new TextNode("2023-01-07T12:59:21.794Z"));
 
                     notificationsArray.add(notification);
