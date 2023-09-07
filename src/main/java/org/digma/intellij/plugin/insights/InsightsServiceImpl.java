@@ -277,7 +277,12 @@ public final class InsightsServiceImpl implements InsightsService, Disposable {
                 var spans = methodInfo.getSpans().stream().map(spanInfo -> new Span(spanInfo.getId(), spanInfo.getName())).toList();
 
                 var statusToUse = predefinedStatus != null ? predefinedStatus.name() : null;
-                if (predefinedStatus == null) {
+
+                boolean needsObservabilityFix = checkObservability(methodInfo, insights);
+
+                if (canInstrumentMethod || hasMissingDependency || needsObservabilityFix) {
+                    statusToUse = UIInsightsStatus.NoObservability.name();
+                } else if (predefinedStatus == null) {
                     statusToUse = UIInsightsStatus.Default.name();
                     if (insights.isEmpty()) {
                         Log.log(logger::debug, "No insights for method {}, Starting background thread to update status.", methodInfo.getName());
@@ -285,9 +290,6 @@ public final class InsightsServiceImpl implements InsightsService, Disposable {
                         updateStatusInBackground(methodInfo);
                     }
                 }
-
-
-                boolean needsObservabilityFix = checkObservability(methodInfo, insights);
 
                 messageHandler.pushInsights(insights, spans, methodInfo.getId(), EMPTY_SERVICE_NAME,
                         AnalyticsService.getInstance(project).getEnvironment().getCurrent(), statusToUse,
